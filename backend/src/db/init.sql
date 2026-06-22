@@ -93,9 +93,25 @@ CREATE TABLE inventario_insumos (
     stock_actual    NUMERIC(10,2)   NOT NULL DEFAULT 0 CHECK (stock_actual >= 0),
     unidad_medida   VARCHAR(30)     NOT NULL,
     stock_minimo    NUMERIC(10,2)   NOT NULL DEFAULT 0,
+    precio_unitario NUMERIC(10,2)   NOT NULL DEFAULT 0 CHECK (precio_unitario >= 0),
     created_at      TIMESTAMPTZ     NOT NULL DEFAULT NOW(),
     updated_at      TIMESTAMPTZ     NOT NULL DEFAULT NOW()
 );
+
+-- ============================================================
+-- Tabla: insumos_utilizados
+-- ============================================================
+CREATE TABLE insumos_utilizados (
+    id                      SERIAL PRIMARY KEY,
+    visita_id               INT             NOT NULL REFERENCES visitas_tecnicas(id) ON DELETE CASCADE,
+    insumo_id               INT             NOT NULL REFERENCES inventario_insumos(id) ON DELETE RESTRICT,
+    cantidad_usada          NUMERIC(10,2)   NOT NULL CHECK (cantidad_usada > 0),
+    precio_unitario_momento NUMERIC(10,2)   NOT NULL CHECK (precio_unitario_momento >= 0),
+    created_at              TIMESTAMPTZ     NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX idx_insumos_utilizados_visita ON insumos_utilizados(visita_id);
+CREATE INDEX idx_insumos_utilizados_insumo ON insumos_utilizados(insumo_id);
 
 -- ============================================================
 -- Datos semilla para desarrollo
@@ -116,10 +132,29 @@ INSERT INTO piscinas (cliente_id, capacidad_litros, tipo_agua, ubicacion_detalla
     (1, 25000.00, 'climatizada', 'Gimnasio subterráneo, nivel -1'),
     (2, 120000.00, 'salada',     'Terraza piso 3, vista al mar');
 
-INSERT INTO inventario_insumos (nombre_quimico, stock_actual, unidad_medida, stock_minimo) VALUES
-    ('Cloro granulado',           50.00, 'kg',     10.00),
-    ('Ácido muriático',           30.00, 'litros', 5.00),
-    ('Alguicida concentrado',     20.00, 'litros', 5.00),
-    ('Sulfato de aluminio',       15.00, 'kg',     3.00),
-    ('Regulador de pH (pH+)',     25.00, 'kg',     5.00),
-    ('Regulador de pH (pH-)',     25.00, 'kg',     5.00);
+INSERT INTO inventario_insumos (nombre_quimico, stock_actual, unidad_medida, stock_minimo, precio_unitario) VALUES
+    ('Cloro granulado',           50.00, 'kg',     10.00, 8500.00),
+    ('Ácido muriático',           30.00, 'litros', 5.00,  4200.00),
+    ('Alguicida concentrado',     20.00, 'litros', 5.00,  12000.00),
+    ('Sulfato de aluminio',       15.00, 'kg',     3.00,  6800.00),
+    ('Regulador de pH (pH+)',     25.00, 'kg',     5.00,  9500.00),
+    ('Regulador de pH (pH-)',     25.00, 'kg',     5.00,  9500.00);
+
+INSERT INTO visitas_tecnicas (piscina_id, tecnico_id, fecha_programada, fecha_completada, estado, notas) VALUES
+    (1, 2, NOW() - INTERVAL '7 days', NOW() - INTERVAL '7 days', 'completada', 'Mantención rutinaria mensual'),
+    (1, 2, NOW() - INTERVAL '3 days', NOW() - INTERVAL '3 days', 'completada', 'Ajuste de pH y cloración'),
+    (2, 3, NOW() - INTERVAL '5 days', NOW() - INTERVAL '5 days', 'completada', 'Tratamiento anti-algas'),
+    (3, 2, NOW() - INTERVAL '1 day',  NULL,                      'en_progreso', 'Revisión general post-temporada'),
+    (1, 3, NOW() + INTERVAL '2 days', NULL,                      'pendiente',   'Mantención programada');
+
+INSERT INTO insumos_utilizados (visita_id, insumo_id, cantidad_usada, precio_unitario_momento) VALUES
+    (1, 1, 2.50, 8500.00),
+    (1, 5, 1.00, 9500.00),
+    (2, 1, 1.00, 8500.00),
+    (2, 2, 0.50, 4200.00),
+    (2, 6, 0.80, 9500.00),
+    (3, 3, 2.00, 12000.00),
+    (3, 1, 1.50, 8500.00),
+    (4, 1, 3.00, 8500.00),
+    (4, 2, 1.00, 4200.00),
+    (4, 4, 2.00, 6800.00);

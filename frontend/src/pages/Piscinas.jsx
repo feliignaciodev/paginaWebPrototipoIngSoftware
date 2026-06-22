@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
-import { Plus, Pencil, Trash2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Plus, Pencil, Trash2, BarChart3 } from 'lucide-react';
 import api from '../services/api';
 
 const emptyForm = { cliente_id: '', capacidad_litros: '', tipo_agua: 'dulce', ubicacion_detallada: '' };
 
 export default function Piscinas() {
+  const navigate = useNavigate();
   const [items, setItems] = useState([]);
   const [clientes, setClientes] = useState([]);
   const [form, setForm] = useState(emptyForm);
@@ -103,6 +105,7 @@ export default function Piscinas() {
                 </td>
                 <td className="px-6 py-3">{item.ubicacion_detallada}</td>
                 <td className="px-6 py-3 text-right space-x-2">
+                  <button onClick={() => navigate(`/piscinas/${item.id}/resumen`)} className="text-accent-600 hover:text-accent-700" title="Ver resumen"><BarChart3 className="w-4 h-4 inline" /></button>
                   <button onClick={() => handleEdit(item)} className="text-blue-600 hover:text-blue-800"><Pencil className="w-4 h-4 inline" /></button>
                   <button onClick={() => handleDelete(item.id)} className="text-red-600 hover:text-red-800"><Trash2 className="w-4 h-4 inline" /></button>
                 </td>

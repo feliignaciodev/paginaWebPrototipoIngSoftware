@@ -15,25 +15,26 @@ exports.findById = async (id) => {
   return rows[0];
 };
 
-exports.create = async ({ nombre_quimico, stock_actual, unidad_medida, stock_minimo }) => {
+exports.create = async ({ nombre_quimico, stock_actual, unidad_medida, stock_minimo, precio_unitario }) => {
   const { rows } = await pool.query(
-    `INSERT INTO inventario_insumos (nombre_quimico, stock_actual, unidad_medida, stock_minimo)
-     VALUES ($1, $2, $3, $4) RETURNING *`,
-    [nombre_quimico, stock_actual, unidad_medida, stock_minimo || 0]
+    `INSERT INTO inventario_insumos (nombre_quimico, stock_actual, unidad_medida, stock_minimo, precio_unitario)
+     VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+    [nombre_quimico, stock_actual, unidad_medida, stock_minimo || 0, precio_unitario || 0]
   );
   return rows[0];
 };
 
-exports.update = async (id, { nombre_quimico, stock_actual, unidad_medida, stock_minimo }) => {
+exports.update = async (id, { nombre_quimico, stock_actual, unidad_medida, stock_minimo, precio_unitario }) => {
   const { rows } = await pool.query(
     `UPDATE inventario_insumos
      SET nombre_quimico = COALESCE($1, nombre_quimico),
          stock_actual = COALESCE($2, stock_actual),
          unidad_medida = COALESCE($3, unidad_medida),
          stock_minimo = COALESCE($4, stock_minimo),
+         precio_unitario = COALESCE($5, precio_unitario),
          updated_at = NOW()
-     WHERE id = $5 RETURNING *`,
-    [nombre_quimico, stock_actual, unidad_medida, stock_minimo, id]
+     WHERE id = $6 RETURNING *`,
+    [nombre_quimico, stock_actual, unidad_medida, stock_minimo, precio_unitario, id]
   );
   return rows[0];
 };
