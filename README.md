@@ -1,6 +1,6 @@
 # PoolTech - Sistema de Gestión de Mantención de Piscinas
 
-Sistema web para la gestión de servicios técnicos de mantención de piscinas. Permite administrar clientes, piscinas, visitas técnicas, reportes de calidad e inventario de insumos químicos.
+Sistema web para la gestión de servicios técnicos de mantención de piscinas. Permite administrar clientes, piscinas, visitas técnicas, reportes de calidad, inventario de insumos químicos y costos por servicio.
 
 ## Tech Stack
 
@@ -13,7 +13,7 @@ Sistema web para la gestión de servicios técnicos de mantención de piscinas. 
 
 ## Requisitos previos
 
-- [Docker](https://docs.docker.com/get-docker/) y Docker Compose
+- [Docker Desktop](https://docs.docker.com/get-docker/) (incluye Docker Compose)
 - (Opcional) Node.js 18+ para desarrollo local sin Docker
 
 ## Inicio rápido
@@ -30,6 +30,8 @@ cp .env.example .env
 docker compose up --build
 ```
 
+La primera vez descarga las imágenes base (~150MB) y construye los contenedores. Las siguientes veces arranca en segundos.
+
 La aplicación estará disponible en:
 
 | Servicio | URL |
@@ -37,6 +39,38 @@ La aplicación estará disponible en:
 | Frontend | http://localhost:5173 |
 | Backend API | http://localhost:3000/api |
 | Health check | http://localhost:3000/api/health |
+
+## Detener la aplicación
+
+```bash
+# Detener los contenedores (conserva los datos de la DB)
+docker compose down
+
+# Detener y BORRAR los datos de la base de datos (reset completo)
+docker compose down -v
+```
+
+## Comandos Docker útiles
+
+```bash
+# Levantar en segundo plano (sin ver logs)
+docker compose up -d
+
+# Ver logs en tiempo real
+docker compose logs -f
+
+# Ver logs de un servicio específico
+docker compose logs -f backend
+
+# Reiniciar un servicio sin detener los demás
+docker compose restart frontend
+
+# Reconstruir después de cambios en package.json o Dockerfile
+docker compose up --build
+
+# Ver estado de los contenedores
+docker compose ps
+```
 
 ## Variables de entorno
 
@@ -71,6 +105,15 @@ Configurables en el archivo `.env`:
 | GET/POST | `/api/inventario` | Listar / crear insumos |
 | GET/PUT/DELETE | `/api/inventario/:id` | Obtener / actualizar / eliminar insumo |
 
+### Resumen y costos
+
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| GET | `/api/resumen/piscinas/:id` | Resumen de piscina con visitas, insumos y costos |
+| GET | `/api/resumen/visitas/:id/insumos` | Insumos utilizados en una visita |
+| POST | `/api/resumen/insumos-utilizados` | Registrar uso de insumo (descuenta stock) |
+| DELETE | `/api/resumen/insumos-utilizados/:id` | Eliminar registro (restaura stock) |
+
 ## Roles de usuario
 
 | Rol | Descripción |
@@ -97,23 +140,32 @@ pool-management/
 │   ├── Dockerfile
 │   ├── package.json
 │   └── src/
-│       ├── index.js              # Entry point
-│       ├── server.js             # Configuración Express
-│       ├── config/database.js    # Pool de conexión PostgreSQL
-│       ├── models/userModel.js   # Modelo de usuarios
-│       ├── controllers/          # Lógica de negocio
-│       ├── routes/               # Definición de rutas
-│       ├── services/             # Consultas a base de datos
-│       └── db/init.sql           # Schema y datos semilla
+│       ├── index.js                  # Entry point
+│       ├── server.js                 # Configuración Express
+│       ├── config/database.js        # Pool de conexión PostgreSQL
+│       ├── models/userModel.js       # Modelo de usuarios
+│       ├── controllers/              # Lógica de negocio
+│       ├── routes/                   # Definición de rutas
+│       ├── services/                 # Consultas a base de datos
+│       └── db/init.sql               # Schema y datos semilla
 └── frontend/
     ├── Dockerfile
     ├── package.json
     └── src/
         ├── main.jsx
         ├── App.jsx
-        ├── components/           # Componentes reutilizables
-        ├── pages/                # Vistas principales
-        └── services/api.js       # Cliente HTTP (Axios)
+        ├── components/
+        │   ├── Layout.jsx            # Sidebar y estructura SPA
+        │   ├── Logo.jsx              # Logo SVG animado (sol + agua)
+        │   └── FormularioReporte.jsx # Reporte de calidad de agua
+        ├── pages/
+        │   ├── Dashboard.jsx         # Panel con tarjetas y alertas
+        │   ├── ResumenPiscina.jsx    # Resumen con costos por piscina
+        │   ├── Clientes.jsx
+        │   ├── Piscinas.jsx
+        │   ├── Visitas.jsx
+        │   └── Inventario.jsx
+        └── services/api.js           # Cliente HTTP (Axios)
 ```
 
 ## Desarrollo local (sin Docker)
