@@ -2,7 +2,115 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ---- Animaciones ---- */
+
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-4px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes wave {
+  0%, 100% { transform: translateX(0); }
+  50%      { transform: translateX(-6px); }
+}
+
+@keyframes sidebarWave {
+  0%, 100% { d: path("M0 20 Q32 0 64 20 Q96 40 128 20 L128 40 L0 40 Z"); }
+  50%      { d: path("M0 20 Q32 40 64 20 Q96 0 128 20 L128 40 L0 40 Z"); }
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.3); }
+  50%      { box-shadow: 0 0 12px 4px rgba(6, 182, 212, 0.15); }
+}
+
+@keyframes countUp {
+  from { opacity: 0; transform: scale(0.5); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ---- Clases utilitarias ---- */
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease-out both;
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 0.3s ease-out both;
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 3s ease-in-out infinite;
+}
+
+.animate-count-up {
+  animation: countUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* Stagger delays para tarjetas */
+.stagger-1 { animation-delay: 0.05s; }
+.stagger-2 { animation-delay: 0.1s; }
+.stagger-3 { animation-delay: 0.15s; }
+.stagger-4 { animation-delay: 0.2s; }
+.stagger-5 { animation-delay: 0.25s; }
+.stagger-6 { animation-delay: 0.3s; }
+
+/* ---- Sidebar wave decorativo ---- */
+
+.sidebar-wave {
+  position: relative;
+  overflow: hidden;
+}
+
+.sidebar-wave::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 40px;
+  background: linear-gradient(180deg, transparent 0%, rgba(6, 182, 212, 0.08) 100%);
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 40'%3E%3Cpath d='M0 20 Q32 0 64 20 Q96 40 128 20 L128 40 L0 40 Z' fill='white'/%3E%3C/svg%3E");
+  mask-size: 128px 40px;
+  mask-repeat: repeat-x;
+  pointer-events: none;
+}
+
+/* ---- Transiciones suaves para tarjetas ---- */
+
+.card-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.08), 0 4px 10px -6px rgba(0, 0, 0, 0.04);
+}
+
+/* ---- Nav link activo con indicador lateral ---- */
+
+.nav-link-active {
+  position: relative;
+}
+
+.nav-link-active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 60%;
+  background: #06b6d4;
+  border-radius: 0 4px 4px 0;
 }

@@ -92,7 +92,7 @@ export default function ResumenPiscina() {
       </div>
 
       {/* Info piscina */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 animate-fade-in-up stagger-1">
         <div className="flex items-center gap-3 mb-4">
           <div className="bg-primary-600 p-3 rounded-xl text-white">
             <Waves className="w-6 h-6" />
@@ -135,8 +135,8 @@ export default function ResumenPiscina() {
       </div>
 
       {/* Tarjetas de totales */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 flex items-center gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 animate-fade-in-up stagger-2">
+        <div className="card-hover bg-white rounded-xl shadow-sm border border-gray-100 p-5 flex items-center gap-4">
           <div className="bg-accent-500 p-3 rounded-xl text-white">
             <CalendarCheck className="w-5 h-5" />
           </div>
@@ -147,7 +147,7 @@ export default function ResumenPiscina() {
             </p>
           </div>
         </div>
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 flex items-center gap-4">
+        <div className="card-hover bg-white rounded-xl shadow-sm border border-gray-100 p-5 flex items-center gap-4">
           <div className="bg-amber-500 p-3 rounded-xl text-white">
             <FlaskConical className="w-5 h-5" />
           </div>
@@ -158,7 +158,7 @@ export default function ResumenPiscina() {
             </p>
           </div>
         </div>
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 flex items-center gap-4">
+        <div className="card-hover bg-white rounded-xl shadow-sm border border-gray-100 p-5 flex items-center gap-4">
           <div className="bg-primary-700 p-3 rounded-xl text-white">
             <DollarSign className="w-5 h-5" />
           </div>
@@ -172,7 +172,7 @@ export default function ResumenPiscina() {
       </div>
 
       {/* Historial de visitas con insumos */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 animate-fade-in-up stagger-3">
         <div className="px-6 py-4 border-b border-gray-100">
           <h3 className="font-semibold text-gray-900">
             Historial de visitas e insumos

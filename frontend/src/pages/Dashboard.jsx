@@ -69,6 +69,7 @@ export default function Dashboard() {
       sub: `de ${stats.piscinasTotal} totales`,
       icon: Waves,
       iconBg: 'bg-primary-600',
+      glow: false,
     },
     {
       label: 'Visitas Pendientes',
@@ -76,6 +77,7 @@ export default function Dashboard() {
       sub: 'programadas hoy o próximas',
       icon: CalendarCheck,
       iconBg: 'bg-accent-500',
+      glow: stats.visitasPendientes > 0,
     },
     {
       label: 'En Progreso',
@@ -83,6 +85,7 @@ export default function Dashboard() {
       sub: 'técnicos en terreno',
       icon: Clock,
       iconBg: 'bg-amber-500',
+      glow: false,
     },
     {
       label: 'Alertas Químicos',
@@ -91,6 +94,7 @@ export default function Dashboard() {
       icon: AlertTriangle,
       iconBg:
         stats.alertasStock.length > 0 ? 'bg-red-500' : 'bg-emerald-500',
+      glow: stats.alertasStock.length > 0,
     },
   ];
 
@@ -108,7 +112,7 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-8">
-      <div>
+      <div className="animate-fade-in-up">
         <h2 className="text-2xl font-bold text-gray-900">Dashboard</h2>
         <p className="text-sm text-gray-500 mt-1">
           Resumen general del sistema
@@ -117,19 +121,19 @@ export default function Dashboard() {
 
       {/* Tarjetas de resumen */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {cards.map(({ label, value, sub, icon: Icon, iconBg }) => (
+        {cards.map(({ label, value, sub, icon: Icon, iconBg, glow }, i) => (
           <div
             key={label}
-            className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex items-start gap-4 hover:shadow-md transition-shadow"
+            className={`card-hover animate-fade-in-up stagger-${i + 1} bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex items-start gap-4`}
           >
             <div
-              className={`${iconBg} p-3 rounded-xl text-white shrink-0`}
+              className={`${iconBg} p-3 rounded-xl text-white shrink-0 ${glow ? 'animate-pulse-glow' : ''}`}
             >
               <Icon className="w-6 h-6" />
             </div>
             <div>
               <p className="text-sm font-medium text-gray-500">{label}</p>
-              <p className="text-3xl font-bold text-gray-900 mt-1">
+              <p className="text-3xl font-bold text-gray-900 mt-1 animate-count-up">
                 {value}
               </p>
               <p className="text-xs text-gray-400 mt-1">{sub}</p>
@@ -140,7 +144,7 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Actividad reciente */}
-        <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100">
+        <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 animate-fade-in-up stagger-5">
           <div className="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
             <TrendingUp className="w-5 h-5 text-primary-600" />
             <h3 className="font-semibold text-gray-900">
@@ -182,7 +186,7 @@ export default function Dashboard() {
         </div>
 
         {/* Panel de alertas de stock */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 animate-fade-in-up stagger-6">
           <div className="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
             <FlaskConical className="w-5 h-5 text-red-500" />
             <h3 className="font-semibold text-gray-900">

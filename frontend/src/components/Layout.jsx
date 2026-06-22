@@ -7,6 +7,7 @@ import {
   Package,
   ClipboardCheck,
 } from 'lucide-react';
+import Logo from './Logo';
 
 const navItems = [
   { to: '/', label: 'Dashboard', icon: LayoutDashboard },
@@ -20,37 +21,44 @@ const navItems = [
 export default function Layout() {
   return (
     <div className="flex h-screen">
-      <aside className="w-64 bg-primary-800 text-white flex flex-col">
-        <div className="p-6 border-b border-primary-700">
-          <h1 className="text-xl font-bold flex items-center gap-2">
-            <Waves className="w-6 h-6" />
-            PoolTech
-          </h1>
-          <p className="text-primary-300 text-xs mt-1">Gestión de Piscinas</p>
+      <aside className="sidebar-wave w-64 bg-gradient-to-b from-primary-900 via-primary-800 to-primary-900 text-white flex flex-col">
+        <div className="p-5 border-b border-primary-700/50">
+          <div className="flex items-center gap-3">
+            <Logo size={42} />
+            <div>
+              <h1 className="text-lg font-bold tracking-wide">PoolTech</h1>
+              <p className="text-primary-400 text-[10px] uppercase tracking-widest">
+                Gestión de Piscinas
+              </p>
+            </div>
+          </div>
         </div>
 
-        <nav className="flex-1 p-4 space-y-1">
-          {navItems.map(({ to, label, icon: Icon }) => (
+        <nav className="flex-1 px-3 py-4 space-y-0.5">
+          {navItems.map(({ to, label, icon: Icon }, i) => (
             <NavLink
               key={to}
               to={to}
               end={to === '/'}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                `flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 animate-slide-in-left stagger-${i + 1} ${
                   isActive
-                    ? 'bg-primary-600 text-white'
-                    : 'text-primary-200 hover:bg-primary-700 hover:text-white'
+                    ? 'nav-link-active bg-primary-600/60 text-white shadow-sm shadow-primary-900/30'
+                    : 'text-primary-300 hover:bg-primary-700/50 hover:text-white hover:translate-x-1'
                 }`
               }
             >
-              <Icon className="w-5 h-5" />
+              <Icon className="w-5 h-5 shrink-0" />
               {label}
             </NavLink>
           ))}
         </nav>
 
-        <div className="p-4 border-t border-primary-700 text-xs text-primary-400">
-          MVP v1.0.0
+        <div className="px-5 py-3 border-t border-primary-700/50 flex items-center justify-between">
+          <span className="text-[10px] text-primary-500 uppercase tracking-wider">
+            MVP v1.0.0
+          </span>
+          <span className="inline-flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
         </div>
       </aside>
 

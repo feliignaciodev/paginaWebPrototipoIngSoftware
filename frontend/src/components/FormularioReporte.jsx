@@ -68,7 +68,7 @@ export default function FormularioReporte() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
-      <div>
+      <div className="animate-fade-in-up">
         <h2 className="text-2xl font-bold text-gray-900">
           Reporte de Calidad
         </h2>
@@ -108,7 +108,7 @@ export default function FormularioReporte() {
 
       <form
         onSubmit={handleSubmit}
-        className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-5"
+        className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-5 animate-fade-in-up stagger-1"
       >
         {/* Visita */}
         <div>
