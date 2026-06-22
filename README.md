@@ -40,17 +40,18 @@ La aplicación estará disponible en:
 | Backend API | http://localhost:3000/api |
 | Health check | http://localhost:3000/api/health |
 
-## Detener la aplicación
+## Comandos esenciales
 
-```bash
-# Detener los contenedores (conserva los datos de la DB)
-docker compose down
+Todos se ejecutan desde la carpeta del proyecto (`cd c:\Users\HP\pool-management`):
 
-# Detener y BORRAR los datos de la base de datos (reset completo)
-docker compose down -v
-```
+| Qué quieres hacer | Comando |
+|---|---|
+| Levantar la app | `docker compose up` |
+| Levantar y reconstruir (si cambiaste código) | `docker compose up --build` |
+| Apagar todo (conserva datos de la DB) | `docker compose down` |
+| Apagar y borrar datos (reset completo) | `docker compose down -v` |
 
-## Comandos Docker útiles
+## Comandos Docker adicionales
 
 ```bash
 # Levantar en segundo plano (sin ver logs)
