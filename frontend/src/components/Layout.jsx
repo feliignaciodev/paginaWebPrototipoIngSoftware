@@ -5,6 +5,7 @@ import {
   Waves,
   CalendarCheck,
   Package,
+  ClipboardCheck,
 } from 'lucide-react';
 
 const navItems = [
@@ -12,6 +13,7 @@ const navItems = [
   { to: '/clientes', label: 'Clientes', icon: Users },
   { to: '/piscinas', label: 'Piscinas', icon: Waves },
   { to: '/visitas', label: 'Visitas', icon: CalendarCheck },
+  { to: '/reportes', label: 'Reportes', icon: ClipboardCheck },
   { to: '/inventario', label: 'Inventario', icon: Package },
 ];
 
@@ -52,7 +54,7 @@ export default function Layout() {
         </div>
       </aside>
 
-      <main className="flex-1 overflow-auto">
+      <main className="flex-1 overflow-auto bg-slate-50">
         <div className="p-8">
           <Outlet />
         </div>
