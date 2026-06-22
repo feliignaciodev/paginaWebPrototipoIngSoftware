@@ -103,9 +103,9 @@ CREATE TABLE inventario_insumos (
 
 -- Password: admin123 (bcrypt hash)
 INSERT INTO usuarios (nombre, correo, password_hash, rol) VALUES
-    ('Administrador', 'admin@pooltech.cl', '$2a$10$xPPKwC0dSRzSO5Z1gJnA4eYB3kVE3N1qMfRhV5aoS7RxFvCkXkPm2', 'administrador'),
-    ('Carlos Reyes',  'carlos@pooltech.cl', '$2a$10$xPPKwC0dSRzSO5Z1gJnA4eYB3kVE3N1qMfRhV5aoS7RxFvCkXkPm2', 'tecnico'),
-    ('María López',   'maria@pooltech.cl',  '$2a$10$xPPKwC0dSRzSO5Z1gJnA4eYB3kVE3N1qMfRhV5aoS7RxFvCkXkPm2', 'tecnico');
+    ('Administrador', 'admin@pooltech.cl', '$2a$10$B7iOP0X.8/iqhCqvlnj7g.GrcQIHnqaxh3dohO5DRdaFEGUUXm0/K', 'administrador'),
+    ('Carlos Reyes',  'carlos@pooltech.cl', '$2a$10$B7iOP0X.8/iqhCqvlnj7g.GrcQIHnqaxh3dohO5DRdaFEGUUXm0/K', 'tecnico'),
+    ('María López',   'maria@pooltech.cl',  '$2a$10$B7iOP0X.8/iqhCqvlnj7g.GrcQIHnqaxh3dohO5DRdaFEGUUXm0/K', 'tecnico');
 
 INSERT INTO clientes (nombre_empresa, telefono, direccion, correo_contacto) VALUES
     ('Condominio Los Álamos',  '+56912345678', 'Av. Las Condes 1234, Santiago',   'contacto@losalamos.cl'),

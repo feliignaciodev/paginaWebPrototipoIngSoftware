@@ -12,7 +12,7 @@ services:
       - pg_data:/var/lib/postgresql/data
       - ./backend/src/db/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-pool_admin}"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-pool_admin} -d ${DB_NAME:-pool_management}"]
       interval: 5s
       timeout: 5s
       retries: 5
