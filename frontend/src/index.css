@@ -97,6 +97,76 @@
   box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.08), 0 4px 10px -6px rgba(0, 0, 0, 0.04);
 }
 
+/* ---- Cards interactivos del dashboard ---- */
+
+.card-interactive {
+  cursor: pointer;
+}
+
+.card-interactive .card-label,
+.card-interactive .card-value,
+.card-interactive .card-sub {
+  transition: transform 0.2s ease;
+  transform-origin: left center;
+}
+
+.card-interactive:hover .card-label {
+  transform: scale(1.05);
+}
+
+.card-interactive:hover .card-value {
+  transform: scale(1.08);
+}
+
+.card-interactive:hover .card-sub {
+  transform: scale(1.04);
+}
+
+/* ---- Modal ---- */
+
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-modal-in {
+  animation: modalIn 0.25s ease-out both;
+}
+
+/* ---- Sidebar colapsable ---- */
+
+.sidebar-expanded {
+  width: 16rem; /* w-64 */
+}
+
+.sidebar-collapsed {
+  width: 4.5rem;
+}
+
+.sidebar-transition {
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar-text {
+  opacity: 1;
+  width: auto;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: opacity 0.2s ease 0.1s;
+}
+
+.sidebar-text-hidden {
+  opacity: 0;
+  width: 0;
+  transition: opacity 0.15s ease, width 0s linear 0.15s;
+}
+
 /* ---- Nav link activo con indicador lateral ---- */
 
 .nav-link-active {
