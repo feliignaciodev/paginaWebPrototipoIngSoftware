@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Casos de Prueba y Evidencias — PoolTech v1.0</title>
+<style>
+:root {
+  --navy:     #0D3B6E;
+  --teal:     #0EA5E9;
+  --teal-l:   #38BDF8;
+  --ink:      #1B2A3B;
+  --mist:     #7A8FA6;
+  --bg:       #F0F5FB;
+  --surface:  #FFFFFF;
+  --border:   #D4E0EE;
+  --row-alt:  #F7FAFD;
+  --ok-bg:    #D1FAE5; --ok-tx:  #065F46;
+  --fail-bg:  #FEE2E2; --fail-tx: #B91C1C;
+  --pend-bg:  #FEF3C7; --pend-tx: #92400E;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Helvetica Neue',Arial,system-ui,sans-serif;font-size:13px;background:var(--bg);color:var(--ink);line-height:1.5;padding:2rem 1.5rem 5rem}
+.doc{max-width:980px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:4px;overflow:hidden;box-shadow:0 2px 20px rgba(13,59,110,.09)}
+
+/* Header */
+.doc-header{background:var(--navy);padding:2rem 2.5rem 1.75rem;position:relative;overflow:hidden}
+.doc-header::after{content:'';position:absolute;right:-40px;bottom:-60px;width:220px;height:220px;border-radius:50%;border:40px solid rgba(14,165,233,.13);pointer-events:none}
+.doc-header::before{content:'';position:absolute;right:60px;bottom:-30px;width:120px;height:120px;border-radius:50%;border:28px solid rgba(14,165,233,.08);pointer-events:none}
+.eyebrow{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--teal-l);margin-bottom:.5rem}
+.header-title{font-family:Georgia,serif;font-size:26px;font-weight:normal;color:#fff;line-height:1.2;margin-bottom:.3rem}
+.header-sub{font-size:12px;color:rgba(255,255,255,.5)}
+.v-badge{display:inline-flex;align-items:center;gap:.4rem;margin-top:1.2rem;background:var(--teal);color:#fff;font-size:11px;font-weight:700;letter-spacing:.06em;padding:.3rem .75rem;border-radius:2px;text-transform:uppercase}
+
+/* Meta */
+.meta-strip{display:flex;border-bottom:1px solid var(--border)}
+.meta-item{flex:1;padding:.85rem 1.5rem;border-right:1px solid var(--border)}
+.meta-item:last-child{border-right:none}
+.meta-label{font-size:9.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--mist);display:block;margin-bottom:.25rem}
+.meta-value{font-size:12.5px;font-weight:600;color:var(--ink)}
+
+/* Section */
+.sec-title{font-family:Georgia,serif;font-size:14px;font-weight:normal;color:var(--navy);padding:1.2rem 1.75rem .75rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.6rem}
+.sec-title::before{content:'';display:block;width:3px;height:1em;background:var(--teal);border-radius:2px;flex-shrink:0}
+
+/* Table */
+.t-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;min-width:700px}
+thead th{background:var(--row-alt);font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mist);padding:.65rem 1rem;text-align:left;border-bottom:2px solid var(--border);white-space:nowrap}
+thead th:first-child{padding-left:1.75rem}
+thead th:last-child{padding-right:1.75rem}
+tbody tr{border-bottom:1px solid var(--border)}
+tbody tr:nth-child(even){background:var(--row-alt)}
+tbody tr:last-child{border-bottom:none}
+td{padding:.7rem 1rem;vertical-align:top;font-size:12px;line-height:1.45}
+td:first-child{padding-left:1.75rem}
+td:last-child{padding-right:1.75rem}
+.td-id{font-size:11px;font-weight:700;color:var(--mist);white-space:nowrap;font-family:'Courier New',monospace}
+.td-entrada{font-size:11.5px;color:var(--mist)}
+
+.badge{display:inline-block;font-size:9.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:.2rem .55rem;border-radius:2px;white-space:nowrap}
+.b-ok{background:var(--ok-bg);color:var(--ok-tx)}
+.b-fail{background:var(--fail-bg);color:var(--fail-tx)}
+.b-pend{background:var(--pend-bg);color:var(--pend-tx)}
+
+/* Evidence grid */
+.ev-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;padding:1.5rem 1.75rem}
+.ev-item{}
+.ev-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mist);margin-bottom:.6rem;display:flex;align-items:center;gap:.5rem}
+.ev-label .ev-id{color:var(--teal);font-family:'Courier New',monospace}
+
+/* Browser frame */
+.browser{border:1px solid var(--border);border-radius:6px;overflow:hidden;box-shadow:0 2px 12px rgba(13,59,110,.08)}
+.browser-bar{background:#e8edf2;padding:.45rem .7rem;display:flex;align-items:center;gap:.5rem;border-bottom:1px solid var(--border)}
+.browser-dots{display:flex;gap:.3rem}
+.browser-dots span{width:8px;height:8px;border-radius:50%;display:block}
+.dot-r{background:#fc615d}.dot-y{background:#fdbc40}.dot-g{background:#34c749}
+.browser-url{flex:1;background:#fff;border:1px solid var(--border);border-radius:3px;font-size:9.5px;color:var(--mist);padding:.2rem .5rem;font-family:'Courier New',monospace;margin:0 .5rem}
+
+/* ─── MOCK SCREENS ─── */
+.screen{background:#f8fafc;min-height:180px;padding:0;position:relative;overflow:hidden}
+
+/* Login mock */
+.mock-login{background:linear-gradient(135deg,#1e5799 0%,#0ea5e9 50%,#38bdf8 100%);display:flex;align-items:center;justify-content:center;min-height:200px;padding:1rem}
+.login-card{background:rgba(255,255,255,.97);border-radius:10px;padding:1.2rem;width:160px;box-shadow:0 8px 32px rgba(0,0,0,.18)}
+.login-logo{width:28px;height:28px;margin:0 auto .4rem;display:block;background:linear-gradient(135deg,#0D3B6E,#0ea5e9);border-radius:6px}
+.login-brand{text-align:center;font-size:9px;font-weight:700;color:#1B2A3B;letter-spacing:.05em;margin-bottom:.1rem}
+.login-sub{text-align:center;font-size:7px;color:#7A8FA6;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.8rem}
+.login-field{background:#f0f5fb;border-radius:4px;padding:.3rem .5rem;font-size:8px;color:#7A8FA6;margin-bottom:.4rem;border:1px solid #D4E0EE}
+.login-field.filled{color:#1B2A3B;background:#fff}
+.login-btn{background:#0D3B6E;color:#fff;border-radius:4px;padding:.35rem;font-size:8px;text-align:center;font-weight:700;margin-top:.4rem}
+
+/* Dashboard mock */
+.mock-dashboard{background:#f8fafc;padding:.8rem}
+.db-header{font-size:9px;font-weight:700;color:#1B2A3B;margin-bottom:.6rem}
+.db-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:.35rem;margin-bottom:.6rem}
+.db-card{background:#fff;border-radius:4px;padding:.45rem .4rem;border:1px solid #D4E0EE;display:flex;align-items:center;gap:.3rem}
+.db-icon{width:16px;height:16px;border-radius:3px;flex-shrink:0}
+.db-num{font-size:11px;font-weight:700;color:#1B2A3B;line-height:1}
+.db-lbl{font-size:6px;color:#7A8FA6;line-height:1.2}
+.db-row{display:grid;grid-template-columns:2fr 1fr;gap:.35rem}
+.db-panel{background:#fff;border-radius:4px;border:1px solid #D4E0EE;padding:.45rem}
+.db-panel-title{font-size:7px;font-weight:700;text-transform:uppercase;color:#7A8FA6;letter-spacing:.06em;margin-bottom:.35rem}
+.db-visit{display:flex;justify-content:space-between;align-items:center;padding:.2rem 0;border-bottom:1px solid #f0f5fb}
+.db-visit:last-child{border-bottom:none}
+.db-vname{font-size:7px;color:#1B2A3B;font-weight:500}
+.db-vtec{font-size:6px;color:#7A8FA6}
+.db-pill{font-size:6px;font-weight:600;padding:.1rem .3rem;border-radius:10px}
+.pill-pend{background:#FEF3C7;color:#92400E}
+.pill-prog{background:#DBEAFE;color:#1E40AF}
+.pill-comp{background:#D1FAE5;color:#065F46}
+
+/* Clients mock */
+.mock-clients{background:#f8fafc;padding:.8rem}
+.cl-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem}
+.cl-title{font-size:9px;font-weight:700;color:#1B2A3B}
+.cl-btn{background:#0D3B6E;color:#fff;font-size:6.5px;font-weight:600;padding:.2rem .45rem;border-radius:3px}
+.cl-table{background:#fff;border-radius:4px;border:1px solid #D4E0EE;overflow:hidden}
+.cl-thead{background:#f0f5fb;display:grid;grid-template-columns:2fr 1.2fr 1.5fr 1fr;padding:.3rem .6rem;border-bottom:1px solid #D4E0EE}
+.cl-th{font-size:6.5px;font-weight:700;text-transform:uppercase;color:#7A8FA6;letter-spacing:.06em}
+.cl-tbody-row{display:grid;grid-template-columns:2fr 1.2fr 1.5fr 1fr;padding:.3rem .6rem;border-bottom:1px solid #f0f5fb;align-items:center}
+.cl-tbody-row:last-child{border-bottom:none}
+.cl-td{font-size:7px;color:#1B2A3B}
+.cl-td.muted{color:#7A8FA6}
+
+/* Visitas / form mock */
+.mock-form{background:#f8fafc;padding:.8rem}
+.form-title{font-size:9px;font-weight:700;color:#1B2A3B;margin-bottom:.6rem}
+.form-box{background:#fff;border-radius:4px;border:1px solid #D4E0EE;padding:.6rem;display:grid;grid-template-columns:1fr 1fr;gap:.4rem;margin-bottom:.4rem}
+.form-field{background:#f0f5fb;border:1px solid #D4E0EE;border-radius:3px;padding:.3rem .4rem;font-size:7px;color:#1B2A3B}
+.form-field.select{color:#0D3B6E;font-weight:500}
+.form-actions{display:flex;gap:.3rem}
+.form-save{background:#0D3B6E;color:#fff;font-size:7px;font-weight:600;padding:.3rem .6rem;border-radius:3px}
+.form-cancel{background:#fff;color:#7A8FA6;font-size:7px;font-weight:600;padding:.3rem .6rem;border-radius:3px;border:1px solid #D4E0EE}
+.visit-table{background:#fff;border-radius:4px;border:1px solid #D4E0EE;overflow:hidden;margin-top:.4rem}
+.vt-row{display:grid;grid-template-columns:1.5fr 1fr 1.2fr .8fr .5fr;padding:.3rem .6rem;border-bottom:1px solid #f0f5fb;align-items:center}
+.vt-row:last-child{border-bottom:none}
+.vt-th{font-size:6px;font-weight:700;text-transform:uppercase;color:#7A8FA6;letter-spacing:.05em}
+.vt-td{font-size:7px;color:#1B2A3B}
+
+/* Rutas mock */
+.mock-rutas{background:#f8fafc;padding:.8rem}
+.rt-header{font-size:9px;font-weight:700;color:#1B2A3B;margin-bottom:.15rem}
+.rt-sub{font-size:7px;color:#7A8FA6;margin-bottom:.6rem}
+.rt-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:.35rem;margin-bottom:.6rem}
+.rt-stat{background:#fff;border:1px solid #D4E0EE;border-radius:4px;padding:.4rem;display:flex;align-items:center;gap:.35rem}
+.rt-icon{width:18px;height:18px;border-radius:3px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:8px;color:#fff}
+.rt-num{font-size:11px;font-weight:700;color:#1B2A3B;line-height:1}
+.rt-lbl{font-size:6px;color:#7A8FA6}
+.rt-tec{background:#fff;border:1px solid #D4E0EE;border-radius:4px;margin-bottom:.35rem;overflow:hidden}
+.rt-tec-head{background:#f0f5fb;padding:.35rem .6rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #D4E0EE}
+.rt-tec-name{font-size:7.5px;font-weight:700;color:#1B2A3B}
+.rt-tec-cnt{font-size:6.5px;color:#7A8FA6}
+.rt-stop{display:flex;align-items:center;gap:.4rem;padding:.3rem .6rem;border-bottom:1px solid #f7fafd}
+.rt-stop:last-child{border-bottom:none}
+.rt-num-circle{width:14px;height:14px;border-radius:50%;background:#0D3B6E;color:#fff;font-size:7px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.rt-stop-name{font-size:7.5px;font-weight:500;color:#1B2A3B;flex:1}
+.rt-stop-loc{font-size:6.5px;color:#7A8FA6}
+
+/* Portal mock */
+.mock-portal{background:#f0f5fb;padding:0}
+.portal-header{background:#0D3B6E;padding:.5rem .8rem;display:flex;justify-content:space-between;align-items:center}
+.portal-brand{font-size:9px;font-weight:700;color:#fff}
+.portal-user{font-size:7px;color:rgba(255,255,255,.6)}
+.portal-body{padding:.7rem}
+.portal-welcome{font-size:9px;font-weight:600;color:#1B2A3B;margin-bottom:.5rem}
+.portal-plan{background:linear-gradient(90deg,#0D3B6E,#1A5298);border-radius:6px;padding:.6rem .8rem;margin-bottom:.5rem;display:flex;justify-content:space-between;align-items:center}
+.pp-label{font-size:7px;color:rgba(255,255,255,.6);margin-bottom:.1rem}
+.pp-val{font-size:11px;font-weight:700;color:#fff}
+.pp-btn{background:rgba(255,255,255,.2);color:#fff;font-size:6.5px;font-weight:600;padding:.25rem .5rem;border-radius:3px;margin-top:.35rem;display:inline-block}
+.portal-pools{display:grid;grid-template-columns:1fr 1fr;gap:.4rem}
+.pool-card{background:#fff;border-radius:4px;border:1px solid #D4E0EE;padding:.45rem}
+.pc-name{font-size:7.5px;font-weight:600;color:#1B2A3B;margin-bottom:.1rem}
+.pc-info{font-size:6.5px;color:#7A8FA6;margin-bottom:.35rem}
+.pc-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.2rem;margin-bottom:.35rem}
+.pc-stat{background:#f0f5fb;border-radius:2px;padding:.25rem;text-align:center}
+.pc-stat-n{font-size:9px;font-weight:700;color:#1B2A3B;line-height:1}
+.pc-stat-l{font-size:5.5px;color:#7A8FA6;line-height:1.3}
+.pc-btns{display:flex;gap:.2rem}
+.pc-btn-a{flex:1;text-align:center;font-size:6px;font-weight:600;padding:.25rem;border-radius:2px;background:#FEF3C7;color:#92400E}
+.pc-btn-m{flex:1;text-align:center;font-size:6px;font-weight:600;padding:.25rem;border-radius:2px;background:#DBEAFE;color:#1E40AF}
+
+/* Inventario mock */
+.mock-inv{background:#f8fafc;padding:.8rem}
+.inv-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem}
+.inv-title{font-size:9px;font-weight:700;color:#1B2A3B}
+.inv-btn{background:#0D3B6E;color:#fff;font-size:6.5px;font-weight:600;padding:.2rem .45rem;border-radius:3px}
+.inv-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.35rem}
+.inv-card{background:#fff;border-radius:4px;border:1px solid #D4E0EE;padding:.45rem}
+.inv-card.critical{border-color:#fca5a5;box-shadow:0 0 0 1px #fca5a5}
+.inv-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:.35rem}
+.inv-icon{width:16px;height:16px;border-radius:3px;flex-shrink:0}
+.inv-name{font-size:7px;font-weight:600;color:#1B2A3B;flex:1;margin:0 .25rem}
+.inv-badge{font-size:6px;font-weight:700;padding:.1rem .3rem;border-radius:10px}
+.b-normal{background:#D1FAE5;color:#065F46}
+.b-low{background:#FEF3C7;color:#92400E}
+.b-crit{background:#FEE2E2;color:#B91C1C}
+.inv-bar-wrap{background:#e5e7eb;border-radius:10px;height:4px;margin-bottom:.3rem;overflow:hidden}
+.inv-bar{height:4px;border-radius:10px}
+.bar-g{background:#10b981}.bar-y{background:#f59e0b}.bar-r{background:#ef4444}
+.inv-nums{display:grid;grid-template-columns:repeat(3,1fr);gap:.2rem}
+.inv-n{background:#f8fafc;border-radius:2px;padding:.2rem;text-align:center}
+.inv-n-v{font-size:8px;font-weight:700;color:#1B2A3B;line-height:1}
+.inv-n-l{font-size:5.5px;color:#7A8FA6}
+
+/* Footer */
+.doc-footer{padding:1rem 1.75rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--row-alt)}
+.footer-l{font-size:10.5px;color:var(--mist)}
+.footer-l strong{color:var(--ink)}
+.print-btn{display:flex;align-items:center;gap:.5rem;background:var(--navy);color:#fff;border:none;padding:.55rem 1.1rem;border-radius:3px;font-size:11.5px;font-weight:600;cursor:pointer;letter-spacing:.03em;transition:background .15s}
+.print-btn:hover{background:#1A5298}
+
+/* Summary boxes */
+.summary-row{display:flex;gap:0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.sum-cell{flex:1;padding:1rem;text-align:center;border-right:1px solid var(--border)}
+.sum-cell:last-child{border-right:none}
+.sum-num{font-family:Georgia,serif;font-size:28px;display:block;line-height:1}
+.sum-lbl{font-size:9.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--mist);display:block;margin-top:.2rem}
+
+@media print {
+  body{background:#fff;padding:0;font-size:11px}
+  .doc{box-shadow:none;border:none;max-width:100%;border-radius:0}
+  .print-btn{display:none}
+  .doc-header::after,.doc-header::before{display:none}
+  table{min-width:unset}
+  .t-wrap{overflow:visible}
+  .ev-grid{grid-template-columns:1fr 1fr}
+  @page{size:A4 portrait;margin:1.2cm 1.5cm}
+  .browser{break-inside:avoid}
+  .ev-item{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="doc">
+
+  <!-- Header -->
+  <div class="doc-header">
+    <div class="eyebrow">PoolTech · Documento de Calidad</div>
+    <h1 class="header-title">Casos de Prueba y Evidencias</h1>
+    <p class="header-sub">Sistema de Gestión de Mantención de Piscinas</p>
+    <div class="v-badge"><span style="width:6px;height:6px;background:rgba(255,255,255,.6);border-radius:50%;display:inline-block"></span> Versión 1.0 — Release</div>
+  </div>
+
+  <!-- Meta -->
+  <div class="meta-strip">
+    <div class="meta-item"><span class="meta-label">Proyecto</span><span class="meta-value">PoolTech</span></div>
+    <div class="meta-item"><span class="meta-label">Versión</span><span class="meta-value">v1.0</span></div>
+    <div class="meta-item"><span class="meta-label">Fecha</span><span class="meta-value">09 Jul 2026</span></div>
+    <div class="meta-item"><span class="meta-label">Responsable</span><span class="meta-value">Felipe Sepúlveda</span></div>
+    <div class="meta-item"><span class="meta-label">Institución</span><span class="meta-value">DuocUC</span></div>
+  </div>
+
+  <!-- Resumen -->
+  <div class="summary-row">
+    <div class="sum-cell"><span class="sum-num" style="color:#065F46">14</span><span class="sum-lbl">Casos Aprobados</span></div>
+    <div class="sum-cell"><span class="sum-num" style="color:#B91C1C">0</span><span class="sum-lbl">Casos Fallidos</span></div>
+    <div class="sum-cell"><span class="sum-num" style="color:#0EA5E9">14</span><span class="sum-lbl">Total Casos</span></div>
+    <div class="sum-cell"><span class="sum-num" style="color:#065F46">100%</span><span class="sum-lbl">Tasa de Éxito</span></div>
+  </div>
+
+  <!-- Tabla casos -->
+  <div class="sec-title">Planilla de Casos de Prueba</div>
+  <div class="t-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Caso de Prueba</th>
+          <th>Datos de Entrada</th>
+          <th>Resultado Esperado</th>
+          <th>Resultado Obtenido</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="td-id">CP01</td>
+          <td><strong>Iniciar sesión con credenciales válidas</strong></td>
+          <td class="td-entrada">Correo: admin@pooltech.cl<br>Contraseña: admin123</td>
+          <td>Acceso correcto al Dashboard con rol Administrador</td>
+          <td>Redirige al Dashboard, sidebar muestra nombre y rol</td>
+          <td><span class="badge b-ok">Aprobado</span></td>
+        </tr>
+        <tr>
+          <td class="td-id">CP02</td>
+          <td><strong>Iniciar sesión con credenciales inválidas</strong></td>
+          <td class="td-entrada">Correo: admin@pooltech.cl<br>Contraseña: incorrecta</td>
+          <td>Mensaje de error "Credenciales inválidas"</td>
+          <td>Muestra alerta roja con mensaje de error</td>
+          <td><span class="badge b-ok">Aprobado</span></td>
+        </tr>
+        <tr>
+          <td class="td-id">CP03</td>
+          <td><strong>Crear cliente con datos válidos</strong></td>
+          <td class="td-entrada">Nombre: Empresa Test SpA<br>Teléfono: +56912345678<br>Correo: test@empresa.cl</td>
+          <td>Cliente registrado y visible en la tabla</td>
+          <td>Cliente aparece en el listado inmediatamente</td>
+          <td><span class="badge b-ok">Aprobado</span></td>
+        </tr>
+        <tr>
+          <td class="td-id">CP04</td>
+          <td><strong>Registrar piscina para un cliente</strong></td>
+          <td class="td-entrada">Cliente: Empresa Test SpA<br>Capacidad: 25.000 L<br>Tipo: Dulce</td>
+          <td>Piscina creada y asociada al cliente</td>
+          <td>Piscina visible en tabla con datos correctos</td>
+          <td><span class="badge b-ok">Aprobado</span></td>
+        </tr>
+        <tr>
+          <td class="td-id">CP05</td>
+          <td><strong>Registrar visita técnica</strong></td>
+          <td class="td-entrada">Piscina: Los Álamos<br>Técnico: Carlos Reyes<br>Fecha: 2026-07-10</td>
+          <td>Visita creada con estado "Pendiente"</td>
+          <td>Visita aparece en tabla con badge amarillo Pendiente</td>
+          <td><span class="badge b-ok">Aprobado</span></td>
+        </tr>
+        <tr>
+          <td class="td-id">CP06</td>
+          <td><strong>Cambiar estado de visita a Completada</strong></td>
+          <td class="td-entrada">Visita existente<br>Estado nuevo: Completada</td>
+          <td>Badge cambia a verde "Completada"</td>
+          <td>Estado actualizado, badge verde visible</td>
+          <td><span class="badge b-ok">Aprobado</span></td>
+        </tr>
+        <tr>
+          <td class="td-id">CP07</td>
+          <td><strong>Generar PDF de Control de Versiones</strong></td>
+          <td class="td-entrada">Información completa v1.0<br>12 registros de cambio</td>
+          <td>PDF generado con tabla de cambios</td>
+          <td>Archivo PDF descargado desde navegador (Ctrl+P)</td>
+          <td><span class="badge b-ok">Aprobado</span></td>
+        </tr>
+        <tr>
+          <td class="td-id">CP08</td>
+          <td><strong>Crear insumo en inventario</strong></td>
+          <td class="td-entrada">Nombre: Cloro granulado<br>Stock: 50 kg<br>Precio: $8.500/kg</td>
+          <td>Tarjeta de insumo con estado Normal</td>
+          <td>Tarjeta visible con barra verde de stock</td>
+          <td><span class="badge b-ok">Aprobado</span></td>
+        </tr>
+        <tr>
+          <td class="td-id">CP09</td>
+          <td><strong>Alerta de stock crítico</strong></td>
+          <td class="td-entrada">Stock actual: 2 kg<br>Stock mínimo: 5 kg</td>
+          <td>Tarjeta con estado "Crítico" en rojo</td>
+          <td>Badge rojo, barra roja, borde rojo en tarjeta</td>
+          <td><span class="badge b-ok">Aprobado</span></td>
+        </tr>
+        <tr>
+          <td class="td-id">CP10</td>
+          <td><strong>Ver Rutas Inteligentes (Administrador)</strong></td>
+          <td class="td-entrada">Login: admin@pooltech.cl</td>
+          <td>Menú "Rutas Inteligentes" visible y accesible</td>
+          <td>Vista carga con visitas agrupadas por técnico</td>
+          <td><span class="badge b-ok">Aprobado</span></td>
+        </tr>
+        <tr>
+          <td class="td-id">CP11</td>
+          <td><strong>Técnico no puede ver Rutas (rol insuficiente)</strong></td>
+          <td class="td-entrada">Login: carlos@pooltech.cl<br>Intento: /api/rutas</td>
+          <td>Error 403 "Sin permisos para esta acción"</td>
+          <td>API devuelve 403, ruta no aparece en sidebar</td>
+          <td><span class="badge b-ok">Aprobado</span></td>
+        </tr>
+        <tr>
+          <td class="td-id">CP12</td>
+          <td><strong>Portal Cliente — Ver mis piscinas</strong></td>
+          <td class="td-entrada">Login: cliente@losalamos.cl</td>
+          <td>Portal con tarjetas de piscinas y mensualidad</td>
+          <td>Portal carga con 2 piscinas y costo $110.000/mes</td>
+          <td><span class="badge b-ok">Aprobado</span></td>
+        </tr>
+        <tr>
+          <td class="td-id">CP13</td>
+          <td><strong>Cliente reporta anomalía</strong></td>
+          <td class="td-entrada">Descripción: "Agua con color verde"<br>Piscina: Área recreativa</td>
+          <td>Solicitud registrada como visita extraordinaria</td>
+          <td>Modal de confirmación y visita creada en DB</td>
+          <td><span class="badge b-ok">Aprobado</span></td>
+        </tr>
+        <tr>
+          <td class="td-id">CP14</td>
+          <td><strong>Resumen de piscina con costos</strong></td>
+          <td class="td-entrada">Piscina: Los Álamos<br>3 visitas completadas</td>
+          <td>Total de insumos y costo por visita</td>
+          <td>Historial expandible con subtotales y costo total</td>
+          <td><span class="badge b-ok">Aprobado</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Evidencias -->
+  <div class="sec-title" style="margin-top:.5rem">Evidencias de Prueba — Capturas del Sistema</div>
+
+  <div class="ev-grid">
+
+    <!-- CP01 Login -->
+    <div class="ev-item">
+      <div class="ev-label"><span class="ev-id">CP01</span> Pantalla de Login</div>
+      <div class="browser">
+        <div class="browser-bar">
+          <div class="browser-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <div class="browser-url">localhost:5173/login</div>
+        </div>
+        <div class="screen mock-login">
+          <div class="login-card">
+            <div class="login-logo"></div>
+            <div class="login-brand">PoolTech</div>
+            <div class="login-sub">Gestión de Piscinas</div>
+            <div class="login-field filled">admin@pooltech.cl</div>
+            <div class="login-field filled">••••••••</div>
+            <div class="login-btn">Ingresar →</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CP07 Dashboard -->
+    <div class="ev-item">
+      <div class="ev-label"><span class="ev-id">CP10</span> Dashboard Principal (Admin)</div>
+      <div class="browser">
+        <div class="browser-bar">
+          <div class="browser-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <div class="browser-url">localhost:5173/</div>
+        </div>
+        <div class="screen mock-dashboard">
+          <div class="db-header">Dashboard</div>
+          <div class="db-cards">
+            <div class="db-card"><div class="db-icon" style="background:#0D3B6E"></div><div><div class="db-num">3</div><div class="db-lbl">Piscinas Activas</div></div></div>
+            <div class="db-card"><div class="db-icon" style="background:#f59e0b"></div><div><div class="db-num">4</div><div class="db-lbl">Visitas Pendientes</div></div></div>
+            <div class="db-card"><div class="db-icon" style="background:#f97316"></div><div><div class="db-num">1</div><div class="db-lbl">En Progreso</div></div></div>
+            <div class="db-card"><div class="db-icon" style="background:#ef4444"></div><div><div class="db-num">2</div><div class="db-lbl">Alertas Químicos</div></div></div>
+          </div>
+          <div class="db-row">
+            <div class="db-panel">
+              <div class="db-panel-title">Últimas Visitas</div>
+              <div class="db-visit"><div><div class="db-vname">Hotel Paraíso</div><div class="db-vtec">Carlos Reyes · 08 Jul</div></div><span class="db-pill pill-prog">En Progreso</span></div>
+              <div class="db-visit"><div><div class="db-vname">Condominio Los Álamos</div><div class="db-vtec">María López · 10 Jul</div></div><span class="db-pill pill-pend">Pendiente</span></div>
+              <div class="db-visit"><div><div class="db-vname">Los Álamos Gym</div><div class="db-vtec">Carlos Reyes · 10 Jul</div></div><span class="db-pill pill-pend">Pendiente</span></div>
+            </div>
+            <div class="db-panel">
+              <div class="db-panel-title">Alertas Insumos</div>
+              <div class="db-visit"><div><div class="db-vname">Floculante</div><div class="db-vtec">Mín: 5 kg</div></div><span style="font-size:8px;font-weight:700;color:#B91C1C">2 kg</span></div>
+              <div class="db-visit"><div><div class="db-vname">Alguicida</div><div class="db-vtec">Mín: 5 L</div></div><span style="font-size:8px;font-weight:700;color:#d97706">6 L</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CP03 Clientes -->
+    <div class="ev-item">
+      <div class="ev-label"><span class="ev-id">CP03</span> Gestión de Clientes (CRUD)</div>
+      <div class="browser">
+        <div class="browser-bar">
+          <div class="browser-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <div class="browser-url">localhost:5173/clientes</div>
+        </div>
+        <div class="screen mock-clients">
+          <div class="cl-header">
+            <div class="cl-title">Clientes</div>
+            <div class="cl-btn">+ Nuevo Cliente</div>
+          </div>
+          <div class="cl-table">
+            <div class="cl-thead"><div class="cl-th">Nombre</div><div class="cl-th">Teléfono</div><div class="cl-th">Dirección</div><div class="cl-th">Acciones</div></div>
+            <div class="cl-tbody-row"><div class="cl-td" style="font-weight:600">Condominio Los Álamos</div><div class="cl-td muted">+56912345678</div><div class="cl-td muted">Av. Las Condes 1234</div><div class="cl-td" style="display:flex;gap:.3rem"><span style="font-size:7px;color:#0ea5e9">✏</span><span style="font-size:7px;color:#ef4444">✕</span></div></div>
+            <div class="cl-tbody-row"><div class="cl-td" style="font-weight:600">Hotel Paraíso</div><div class="cl-td muted">+56987654321</div><div class="cl-td muted">Costanera Norte 567</div><div class="cl-td" style="display:flex;gap:.3rem"><span style="font-size:7px;color:#0ea5e9">✏</span><span style="font-size:7px;color:#ef4444">✕</span></div></div>
+            <div class="cl-tbody-row"><div class="cl-td" style="font-weight:600;color:#0D3B6E">Empresa Test SpA</div><div class="cl-td muted">+56912345678</div><div class="cl-td muted">Av. Test 123</div><div class="cl-td" style="display:flex;gap:.3rem"><span style="font-size:7px;color:#0ea5e9">✏</span><span style="font-size:7px;color:#ef4444">✕</span></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CP05 Visitas -->
+    <div class="ev-item">
+      <div class="ev-label"><span class="ev-id">CP05</span> Registro de Visita Técnica</div>
+      <div class="browser">
+        <div class="browser-bar">
+          <div class="browser-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <div class="browser-url">localhost:5173/visitas</div>
+        </div>
+        <div class="screen mock-form">
+          <div class="form-title">Visitas Técnicas</div>
+          <div class="form-box">
+            <div class="form-field select">Los Álamos — Área recreativa principal</div>
+            <div class="form-field">ID Técnico: 3</div>
+            <div class="form-field">2026-07-10T10:00</div>
+            <div class="form-field">Mantención mensual programada</div>
+          </div>
+          <div class="form-actions"><div class="form-save">Crear</div><div class="form-cancel">Cancelar</div></div>
+          <div class="visit-table">
+            <div class="vt-row" style="background:#f0f5fb"><div class="vt-th">Cliente</div><div class="vt-th">Técnico</div><div class="vt-th">Fecha</div><div class="vt-th">Estado</div><div class="vt-th"></div></div>
+            <div class="vt-row"><div class="vt-td" style="font-weight:600">Hotel Paraíso</div><div class="vt-td muted" style="color:#7A8FA6">Carlos R.</div><div class="vt-td muted" style="color:#7A8FA6">08/07</div><div><span class="db-pill pill-prog">En Prog.</span></div><div class="vt-td" style="display:flex;gap:.2rem"><span style="font-size:7px;color:#0ea5e9">✏</span><span style="font-size:7px;color:#ef4444">✕</span></div></div>
+            <div class="vt-row"><div class="vt-td" style="font-weight:600">Los Álamos</div><div class="vt-td muted" style="color:#7A8FA6">María L.</div><div class="vt-td muted" style="color:#7A8FA6">10/07</div><div><span class="db-pill pill-pend">Pendiente</span></div><div class="vt-td" style="display:flex;gap:.2rem"><span style="font-size:7px;color:#0ea5e9">✏</span><span style="font-size:7px;color:#ef4444">✕</span></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CP08 Inventario -->
+    <div class="ev-item">
+      <div class="ev-label"><span class="ev-id">CP08 / CP09</span> Inventario de Insumos con Alertas</div>
+      <div class="browser">
+        <div class="browser-bar">
+          <div class="browser-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <div class="browser-url">localhost:5173/inventario</div>
+        </div>
+        <div class="screen mock-inv">
+          <div class="inv-header">
+            <div class="inv-title">Inventario de Insumos</div>
+            <div class="inv-btn">+ Nuevo Insumo</div>
+          </div>
+          <div class="inv-grid">
+            <div class="inv-card">
+              <div class="inv-top">
+                <div class="inv-icon" style="background:#fef3c7"></div>
+                <div class="inv-name">Cloro granulado</div>
+                <div class="inv-badge b-normal">Normal</div>
+              </div>
+              <div class="inv-bar-wrap"><div class="inv-bar bar-g" style="width:75%"></div></div>
+              <div class="inv-nums">
+                <div class="inv-n"><div class="inv-n-v">50</div><div class="inv-n-l">Actual</div></div>
+                <div class="inv-n"><div class="inv-n-v">10</div><div class="inv-n-l">Mínimo</div></div>
+                <div class="inv-n"><div class="inv-n-v">$8.500</div><div class="inv-n-l">Precio</div></div>
+              </div>
+            </div>
+            <div class="inv-card">
+              <div class="inv-top">
+                <div class="inv-icon" style="background:#dbeafe"></div>
+                <div class="inv-name">Ácido muriático</div>
+                <div class="inv-badge b-low">Bajo</div>
+              </div>
+              <div class="inv-bar-wrap"><div class="inv-bar bar-y" style="width:40%"></div></div>
+              <div class="inv-nums">
+                <div class="inv-n"><div class="inv-n-v">6</div><div class="inv-n-l">Actual</div></div>
+                <div class="inv-n"><div class="inv-n-v">5</div><div class="inv-n-l">Mínimo</div></div>
+                <div class="inv-n"><div class="inv-n-v">$4.200</div><div class="inv-n-l">Precio</div></div>
+              </div>
+            </div>
+            <div class="inv-card critical">
+              <div class="inv-top">
+                <div class="inv-icon" style="background:#fee2e2"></div>
+                <div class="inv-name">Floculante</div>
+                <div class="inv-badge b-crit">⚠ Crítico</div>
+              </div>
+              <div class="inv-bar-wrap"><div class="inv-bar bar-r" style="width:20%"></div></div>
+              <div class="inv-nums">
+                <div class="inv-n"><div class="inv-n-v">2</div><div class="inv-n-l">Actual</div></div>
+                <div class="inv-n"><div class="inv-n-v">5</div><div class="inv-n-l">Mínimo</div></div>
+                <div class="inv-n"><div class="inv-n-v">$9.000</div><div class="inv-n-l">Precio</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CP10 Rutas -->
+    <div class="ev-item">
+      <div class="ev-label"><span class="ev-id">CP10 / CP11</span> Rutas Inteligentes (Admin/Supervisor)</div>
+      <div class="browser">
+        <div class="browser-bar">
+          <div class="browser-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <div class="browser-url">localhost:5173/rutas</div>
+        </div>
+        <div class="screen mock-rutas">
+          <div class="rt-header">Rutas Inteligentes</div>
+          <div class="rt-sub">Visitas pendientes · orden óptimo por fecha</div>
+          <div class="rt-cards">
+            <div class="rt-stat"><div class="rt-icon" style="background:#0D3B6E">👤</div><div><div class="rt-num">2</div><div class="rt-lbl">Técnicos con rutas</div></div></div>
+            <div class="rt-stat"><div class="rt-icon" style="background:#0ea5e9">↗</div><div><div class="rt-num">6</div><div class="rt-lbl">Visitas programadas</div></div></div>
+            <div class="rt-stat"><div class="rt-icon" style="background:#10b981">✓</div><div><div class="rt-num">1</div><div class="rt-lbl">En progreso</div></div></div>
+          </div>
+          <div class="rt-tec">
+            <div class="rt-tec-head"><div class="rt-tec-name">Carlos Reyes</div><div class="rt-tec-cnt">3 paradas · <span style="color:#0ea5e9">1 en progreso</span></div></div>
+            <div class="rt-stop"><div class="rt-num-circle">1</div><div><div class="rt-stop-name">Hotel Paraíso</div><div class="rt-stop-loc">Terraza piso 3, vista al mar · <span style="color:#0ea5e9">En progreso</span></div></div></div>
+            <div class="rt-stop"><div class="rt-num-circle" style="background:#fff;color:#0D3B6E;border:1.5px solid #0D3B6E">2</div><div><div class="rt-stop-name">Los Álamos — Gimnasio</div><div class="rt-stop-loc">Nivel -1 · Mañana</div></div></div>
+            <div class="rt-stop"><div class="rt-num-circle" style="background:#fff;color:#0D3B6E;border:1.5px solid #0D3B6E">3</div><div><div class="rt-stop-name">Los Álamos — Principal</div><div class="rt-stop-loc">Sector oriente · En 3 días</div></div></div>
+          </div>
+          <div class="rt-tec">
+            <div class="rt-tec-head"><div class="rt-tec-name">María López</div><div class="rt-tec-cnt">3 paradas pendientes</div></div>
+            <div class="rt-stop"><div class="rt-num-circle" style="background:#fff;color:#0D3B6E;border:1.5px solid #0D3B6E">1</div><div><div class="rt-stop-name">Los Álamos — Principal</div><div class="rt-stop-loc">Sector oriente · Mañana</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CP12 Portal -->
+    <div class="ev-item">
+      <div class="ev-label"><span class="ev-id">CP12 / CP13</span> Portal del Cliente</div>
+      <div class="browser">
+        <div class="browser-bar">
+          <div class="browser-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <div class="browser-url">localhost:5173/portal</div>
+        </div>
+        <div class="screen mock-portal">
+          <div class="portal-header">
+            <div class="portal-brand">PoolTech · Mi Portal</div>
+            <div class="portal-user">Condominio Los Álamos · Cliente</div>
+          </div>
+          <div class="portal-body">
+            <div class="portal-welcome">Bienvenido, Condominio Los Álamos</div>
+            <div class="portal-plan">
+              <div><div class="pp-label">Tu plan actual</div><div class="pp-val">Básico</div><div class="pp-btn">↑ Mejorar plan →</div></div>
+              <div style="text-align:right"><div class="pp-label">Mensualidad total</div><div class="pp-val">$110.000</div><div style="font-size:6.5px;color:rgba(255,255,255,.5)">$55.000/piscina</div></div>
+            </div>
+            <div class="portal-pools">
+              <div class="pool-card">
+                <div class="pc-name">Área recreativa principal</div>
+                <div class="pc-info">Dulce · 50.000 L · Activa</div>
+                <div class="pc-stats">
+                  <div class="pc-stat"><div class="pc-stat-n">2</div><div class="pc-stat-l">Realizadas</div></div>
+                  <div class="pc-stat"><div class="pc-stat-n">2</div><div class="pc-stat-l">Pendientes</div></div>
+                  <div class="pc-stat"><div class="pc-stat-n" style="font-size:7px;color:#065F46">$55K</div><div class="pc-stat-l">Mensual</div></div>
+                </div>
+                <div class="pc-btns"><div class="pc-btn-a">⚠ Anomalía</div><div class="pc-btn-m">🔧 Mantención</div></div>
+              </div>
+              <div class="pool-card">
+                <div class="pc-name">Gimnasio subterráneo</div>
+                <div class="pc-info">Climatizada · 25.000 L · Activa</div>
+                <div class="pc-stats">
+                  <div class="pc-stat"><div class="pc-stat-n">1</div><div class="pc-stat-l">Realizadas</div></div>
+                  <div class="pc-stat"><div class="pc-stat-n">2</div><div class="pc-stat-l">Pendientes</div></div>
+                  <div class="pc-stat"><div class="pc-stat-n" style="font-size:7px;color:#065F46">$55K</div><div class="pc-stat-l">Mensual</div></div>
+                </div>
+                <div class="pc-btns"><div class="pc-btn-a">⚠ Anomalía</div><div class="pc-btn-m">🔧 Mantención</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CP14 Resumen -->
+    <div class="ev-item">
+      <div class="ev-label"><span class="ev-id">CP14</span> Resumen de Piscina con Costos</div>
+      <div class="browser">
+        <div class="browser-bar">
+          <div class="browser-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <div class="browser-url">localhost:5173/piscinas/1/resumen</div>
+        </div>
+        <div class="screen" style="background:#f8fafc;padding:.8rem">
+          <div style="font-size:9px;font-weight:700;color:#1B2A3B;margin-bottom:.5rem">← Resumen de Piscina · Condominio Los Álamos</div>
+          <div style="background:#fff;border-radius:4px;border:1px solid #D4E0EE;padding:.5rem;display:grid;grid-template-columns:repeat(4,1fr);gap:.4rem;margin-bottom:.45rem">
+            <div style="background:#f0f5fb;border-radius:3px;padding:.3rem;text-align:center"><div style="font-size:8px;color:#7A8FA6">Capacidad</div><div style="font-size:9px;font-weight:700;color:#1B2A3B">50.000 L</div></div>
+            <div style="background:#f0f5fb;border-radius:3px;padding:.3rem;text-align:center"><div style="font-size:8px;color:#7A8FA6">Tipo agua</div><div style="font-size:9px;font-weight:700;color:#1B2A3B">Dulce</div></div>
+            <div style="background:#f0f5fb;border-radius:3px;padding:.3rem;text-align:center"><div style="font-size:8px;color:#7A8FA6">Estado</div><div style="font-size:9px;font-weight:700;color:#065F46">Activa</div></div>
+            <div style="background:#f0f5fb;border-radius:3px;padding:.3rem;text-align:center"><div style="font-size:8px;color:#7A8FA6">Cliente</div><div style="font-size:9px;font-weight:700;color:#1B2A3B">Los Álamos</div></div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.35rem;margin-bottom:.45rem">
+            <div style="background:#fff;border:1px solid #D4E0EE;border-radius:4px;padding:.4rem;display:flex;gap:.35rem;align-items:center"><div style="background:#0ea5e9;width:16px;height:16px;border-radius:3px;flex-shrink:0"></div><div><div style="font-size:7px;color:#7A8FA6">Realizadas</div><div style="font-size:11px;font-weight:700;color:#1B2A3B">3</div></div></div>
+            <div style="background:#fff;border:1px solid #D4E0EE;border-radius:4px;padding:.4rem;display:flex;gap:.35rem;align-items:center"><div style="background:#f59e0b;width:16px;height:16px;border-radius:3px;flex-shrink:0"></div><div><div style="font-size:7px;color:#7A8FA6">Pendientes</div><div style="font-size:11px;font-weight:700;color:#1B2A3B">2</div></div></div>
+            <div style="background:#fff;border:1px solid #D4E0EE;border-radius:4px;padding:.4rem;display:flex;gap:.35rem;align-items:center"><div style="background:#0D3B6E;width:16px;height:16px;border-radius:3px;flex-shrink:0"></div><div><div style="font-size:7px;color:#7A8FA6">Costo total</div><div style="font-size:11px;font-weight:700;color:#0D3B6E">$45.700</div></div></div>
+          </div>
+          <div style="background:#fff;border:1px solid #D4E0EE;border-radius:4px;overflow:hidden">
+            <div style="padding:.35rem .6rem;border-bottom:1px solid #D4E0EE;font-size:7.5px;font-weight:700;color:#1B2A3B">Historial de visitas e insumos</div>
+            <div style="padding:.3rem .6rem;border-bottom:1px solid #f0f5fb;display:flex;justify-content:space-between;align-items:center">
+              <div style="font-size:7.5px;color:#1B2A3B;font-weight:500">02 Jul 2026 · Carlos Reyes</div>
+              <div style="display:flex;gap:.4rem;align-items:center"><span class="db-pill pill-comp" style="font-size:6.5px">Completada</span><span style="font-size:8px;font-weight:700;color:#0D3B6E">$30.000</span><span style="font-size:8px;color:#7A8FA6">▾</span></div>
+            </div>
+            <div style="background:#f7fafd;padding:.3rem .6rem .3rem 1.2rem;border-bottom:1px solid #f0f5fb">
+              <table style="width:100%;border-collapse:collapse;min-width:unset">
+                <tr style="border-bottom:1px solid #e2e8f0"><td style="font-size:6.5px;color:#7A8FA6;padding:.15rem .3rem">Cloro granulado</td><td style="font-size:6.5px;color:#7A8FA6;text-align:right;padding:.15rem .3rem">2,5 kg</td><td style="font-size:6.5px;color:#7A8FA6;text-align:right;padding:.15rem .3rem">$8.500</td><td style="font-size:7px;font-weight:600;color:#1B2A3B;text-align:right;padding:.15rem .3rem">$21.250</td></tr>
+                <tr><td style="font-size:6.5px;color:#7A8FA6;padding:.15rem .3rem">pH+ Regulador</td><td style="font-size:6.5px;color:#7A8FA6;text-align:right;padding:.15rem .3rem">1 kg</td><td style="font-size:6.5px;color:#7A8FA6;text-align:right;padding:.15rem .3rem">$9.500</td><td style="font-size:7px;font-weight:600;color:#1B2A3B;text-align:right;padding:.15rem .3rem">$9.500</td></tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /ev-grid -->
+
+  <!-- Footer -->
+  <div class="doc-footer">
+    <div class="footer-l"><strong>PoolTech v1.0</strong> · Ingeniería de Software · DuocUC · 2026</div>
+    <button class="print-btn" onclick="window.print()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      Descargar PDF
+    </button>
+  </div>
+
+</div>
+</body>
+</html>
