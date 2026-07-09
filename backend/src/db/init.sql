@@ -3,7 +3,7 @@
 -- Script de inicialización de base de datos
 -- ============================================================
 
-CREATE TYPE rol_usuario AS ENUM ('administrador', 'tecnico', 'cliente');
+CREATE TYPE rol_usuario AS ENUM ('administrador', 'supervisor', 'tecnico', 'cliente');
 CREATE TYPE estado_visita AS ENUM ('pendiente', 'en_progreso', 'completada');
 CREATE TYPE tipo_agua AS ENUM ('dulce', 'salada', 'climatizada');
 
@@ -117,15 +117,18 @@ CREATE INDEX idx_insumos_utilizados_insumo ON insumos_utilizados(insumo_id);
 -- Datos semilla para desarrollo
 -- ============================================================
 
--- Password: admin123 (bcrypt hash)
+-- Contraseña de todos los usuarios semilla: admin123
 INSERT INTO usuarios (nombre, correo, password_hash, rol) VALUES
-    ('Administrador', 'admin@pooltech.cl', '$2a$10$B7iOP0X.8/iqhCqvlnj7g.GrcQIHnqaxh3dohO5DRdaFEGUUXm0/K', 'administrador'),
-    ('Carlos Reyes',  'carlos@pooltech.cl', '$2a$10$B7iOP0X.8/iqhCqvlnj7g.GrcQIHnqaxh3dohO5DRdaFEGUUXm0/K', 'tecnico'),
-    ('María López',   'maria@pooltech.cl',  '$2a$10$B7iOP0X.8/iqhCqvlnj7g.GrcQIHnqaxh3dohO5DRdaFEGUUXm0/K', 'tecnico');
+    ('Administrador',          'admin@pooltech.cl',      '$2a$10$B7iOP0X.8/iqhCqvlnj7g.GrcQIHnqaxh3dohO5DRdaFEGUUXm0/K', 'administrador'),
+    ('Ana González',           'ana@pooltech.cl',        '$2a$10$B7iOP0X.8/iqhCqvlnj7g.GrcQIHnqaxh3dohO5DRdaFEGUUXm0/K', 'supervisor'),
+    ('Carlos Reyes',           'carlos@pooltech.cl',     '$2a$10$B7iOP0X.8/iqhCqvlnj7g.GrcQIHnqaxh3dohO5DRdaFEGUUXm0/K', 'tecnico'),
+    ('María López',            'maria@pooltech.cl',      '$2a$10$B7iOP0X.8/iqhCqvlnj7g.GrcQIHnqaxh3dohO5DRdaFEGUUXm0/K', 'tecnico'),
+    ('Condominio Los Álamos',  'cliente@losalamos.cl',   '$2a$10$B7iOP0X.8/iqhCqvlnj7g.GrcQIHnqaxh3dohO5DRdaFEGUUXm0/K', 'cliente');
 
-INSERT INTO clientes (nombre_empresa, telefono, direccion, correo_contacto) VALUES
-    ('Condominio Los Álamos',  '+56912345678', 'Av. Las Condes 1234, Santiago',   'contacto@losalamos.cl'),
-    ('Hotel Paraíso',          '+56987654321', 'Costanera Norte 567, Viña del Mar', 'reservas@hotelparaiso.cl');
+-- usuario_id 5 = Condominio Los Álamos (cliente)
+INSERT INTO clientes (nombre_empresa, telefono, direccion, correo_contacto, usuario_id) VALUES
+    ('Condominio Los Álamos',  '+56912345678', 'Av. Las Condes 1234, Santiago',    'contacto@losalamos.cl',     5),
+    ('Hotel Paraíso',          '+56987654321', 'Costanera Norte 567, Viña del Mar', 'reservas@hotelparaiso.cl', NULL);
 
 INSERT INTO piscinas (cliente_id, capacidad_litros, tipo_agua, ubicacion_detallada) VALUES
     (1, 50000.00, 'dulce',       'Área recreativa principal, sector oriente'),
@@ -140,12 +143,17 @@ INSERT INTO inventario_insumos (nombre_quimico, stock_actual, unidad_medida, sto
     ('Regulador de pH (pH+)',     25.00, 'kg',     5.00,  9500.00),
     ('Regulador de pH (pH-)',     25.00, 'kg',     5.00,  9500.00);
 
+-- tecnico_id: 3=Carlos Reyes, 4=María López (id 1=admin, id 2=supervisor)
 INSERT INTO visitas_tecnicas (piscina_id, tecnico_id, fecha_programada, fecha_completada, estado, notas) VALUES
-    (1, 2, NOW() - INTERVAL '7 days', NOW() - INTERVAL '7 days', 'completada', 'Mantención rutinaria mensual'),
-    (1, 2, NOW() - INTERVAL '3 days', NOW() - INTERVAL '3 days', 'completada', 'Ajuste de pH y cloración'),
-    (2, 3, NOW() - INTERVAL '5 days', NOW() - INTERVAL '5 days', 'completada', 'Tratamiento anti-algas'),
-    (3, 2, NOW() - INTERVAL '1 day',  NULL,                      'en_progreso', 'Revisión general post-temporada'),
-    (1, 3, NOW() + INTERVAL '2 days', NULL,                      'pendiente',   'Mantención programada');
+    (1, 3, NOW() - INTERVAL '7 days', NOW() - INTERVAL '7 days', 'completada',  'Mantención rutinaria mensual'),
+    (1, 3, NOW() - INTERVAL '3 days', NOW() - INTERVAL '3 days', 'completada',  'Ajuste de pH y cloración'),
+    (2, 4, NOW() - INTERVAL '5 days', NOW() - INTERVAL '5 days', 'completada',  'Tratamiento anti-algas'),
+    (3, 3, NOW() - INTERVAL '1 day',  NULL,                      'en_progreso', 'Revisión general post-temporada'),
+    (1, 4, NOW() + INTERVAL '1 day',  NULL,                      'pendiente',   'Mantención programada'),
+    (2, 3, NOW() + INTERVAL '1 day',  NULL,                      'pendiente',   'Revisión de pH y temperatura del agua'),
+    (3, 4, NOW() + INTERVAL '2 days', NULL,                      'pendiente',   'Limpieza de filtros y revisión de bomba'),
+    (1, 3, NOW() + INTERVAL '3 days', NULL,                      'pendiente',   'Control mensual de cloro y alguicida'),
+    (2, 4, NOW() + INTERVAL '4 days', NULL,                      'pendiente',   'Tratamiento preventivo anti-algas');
 
 INSERT INTO insumos_utilizados (visita_id, insumo_id, cantidad_usada, precio_unitario_momento) VALUES
     (1, 1, 2.50, 8500.00),

@@ -2,23 +2,45 @@ import { createContext, useContext, useState } from 'react';
 
 const AuthContext = createContext(null);
 
-export function AuthProvider({ children }) {
-  const [authenticated, setAuthenticated] = useState(
-    () => sessionStorage.getItem('pooltech_auth') === '1'
-  );
+const STORAGE_KEY = 'pooltech_session';
 
-  const login = () => {
-    sessionStorage.setItem('pooltech_auth', '1');
-    setAuthenticated(true);
+function loadSession() {
+  try {
+    const raw = sessionStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+export function AuthProvider({ children }) {
+  const [session, setSession] = useState(() => loadSession());
+
+  const login = (user, token) => {
+    const data = { user, token };
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    setSession(data);
   };
 
   const logout = () => {
-    sessionStorage.removeItem('pooltech_auth');
-    setAuthenticated(false);
+    sessionStorage.removeItem(STORAGE_KEY);
+    setSession(null);
   };
 
+  const canViewRoutes = () =>
+    ['administrador', 'supervisor'].includes(session?.user?.rol);
+
   return (
-    <AuthContext.Provider value={{ authenticated, login, logout }}>
+    <AuthContext.Provider
+      value={{
+        authenticated: !!session,
+        user: session?.user ?? null,
+        token: session?.token ?? null,
+        login,
+        logout,
+        canViewRoutes,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

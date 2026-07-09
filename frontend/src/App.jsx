@@ -9,24 +9,41 @@ import Visitas from './pages/Visitas';
 import Inventario from './pages/Inventario';
 import FormularioReporte from './components/FormularioReporte';
 import ResumenPiscina from './pages/ResumenPiscina';
+import RutasInteligentes from './pages/RutasInteligentes';
+import PortalCliente from './pages/PortalCliente';
 
-function ProtectedRoute({ children }) {
-  const { authenticated } = useAuth();
-  return authenticated ? children : <Navigate to="/login" replace />;
+function ProtectedRoute({ children, roles }) {
+  const { authenticated, user } = useAuth();
+  if (!authenticated) return <Navigate to="/login" replace />;
+  if (roles && !roles.includes(user?.rol)) return <Navigate to="/" replace />;
+  return children;
 }
 
 export default function App() {
-  const { authenticated } = useAuth();
+  const { authenticated, user } = useAuth();
+
+  const loginRedirect = authenticated
+    ? <Navigate to={user?.rol === 'cliente' ? '/portal' : '/'} replace />
+    : <Login />;
 
   return (
     <Routes>
+      <Route path="/login" element={loginRedirect} />
+
+      {/* Portal exclusivo para clientes */}
       <Route
-        path="/login"
-        element={authenticated ? <Navigate to="/" replace /> : <Login />}
+        path="/portal"
+        element={
+          <ProtectedRoute roles={['cliente']}>
+            <PortalCliente />
+          </ProtectedRoute>
+        }
       />
+
+      {/* App principal para admin, supervisor y técnico */}
       <Route
         element={
-          <ProtectedRoute>
+          <ProtectedRoute roles={['administrador', 'supervisor', 'tecnico']}>
             <Layout />
           </ProtectedRoute>
         }
@@ -38,7 +55,16 @@ export default function App() {
         <Route path="/visitas" element={<Visitas />} />
         <Route path="/reportes" element={<FormularioReporte />} />
         <Route path="/inventario" element={<Inventario />} />
+        <Route
+          path="/rutas"
+          element={
+            <ProtectedRoute roles={['administrador', 'supervisor']}>
+              <RutasInteligentes />
+            </ProtectedRoute>
+          }
+        />
       </Route>
+
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

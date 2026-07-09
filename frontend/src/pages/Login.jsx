@@ -4,9 +4,10 @@ import { LogIn, Eye, EyeOff } from 'lucide-react';
 import Logo from '../components/Logo';
 import PoolBackground from '../components/PoolBackground';
 import { useAuth } from '../context/AuthContext';
+import api from '../services/api';
 
 export default function Login() {
-  const [usuario, setUsuario] = useState('');
+  const [correo, setCorreo] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -14,25 +15,20 @@ export default function Login() {
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
-
-    setTimeout(() => {
-      try {
-        if (usuario.trim() === 'Admin' && password === 'admin123') {
-          login();
-          navigate('/', { replace: true });
-        } else {
-          setError('Usuario o contraseña incorrectos');
-        }
-      } catch {
-        setError('Ocurrió un error inesperado. Intente nuevamente.');
-      } finally {
-        setLoading(false);
-      }
-    }, 600);
+    try {
+      const { data } = await api.post('/auth/login', { correo, password });
+      login(data.user, data.token);
+      // Clientes van a su portal; el resto al dashboard
+      navigate(data.user.rol === 'cliente' ? '/portal' : '/', { replace: true });
+    } catch (err) {
+      setError(err.response?.data?.error || 'Error al conectar con el servidor');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -56,15 +52,16 @@ export default function Login() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-600 mb-1.5">
-                Usuario
+                Correo electrónico
               </label>
               <input
-                type="text"
-                value={usuario}
-                onChange={(e) => { setUsuario(e.target.value); setError(''); }}
-                placeholder="Ingrese su usuario"
+                type="email"
+                value={correo}
+                onChange={(e) => { setCorreo(e.target.value); setError(''); }}
+                placeholder="usuario@pooltech.cl"
                 className="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-white text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 transition-all"
                 autoFocus
+                required
               />
             </div>
 
@@ -79,6 +76,7 @@ export default function Login() {
                   onChange={(e) => { setPassword(e.target.value); setError(''); }}
                   placeholder="Ingrese su contraseña"
                   className="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-white text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 transition-all pr-10"
+                  required
                 />
                 <button
                   type="button"
@@ -99,7 +97,7 @@ export default function Login() {
 
             <button
               type="submit"
-              disabled={loading || !usuario.trim() || !password}
+              disabled={loading || !correo.trim() || !password}
               className="w-full flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium py-2.5 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md mt-2"
             >
               {loading ? (
