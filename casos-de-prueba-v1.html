@@ -253,9 +253,9 @@ td:last-child{padding-right:1.75rem}
 
   <!-- Resumen -->
   <div class="summary-row">
-    <div class="sum-cell"><span class="sum-num" style="color:#065F46">14</span><span class="sum-lbl">Casos Aprobados</span></div>
+    <div class="sum-cell"><span class="sum-num" style="color:#065F46">15</span><span class="sum-lbl">Casos Aprobados</span></div>
     <div class="sum-cell"><span class="sum-num" style="color:#B91C1C">0</span><span class="sum-lbl">Casos Fallidos</span></div>
-    <div class="sum-cell"><span class="sum-num" style="color:#0EA5E9">14</span><span class="sum-lbl">Total Casos</span></div>
+    <div class="sum-cell"><span class="sum-num" style="color:#0EA5E9">15</span><span class="sum-lbl">Total Casos</span></div>
     <div class="sum-cell"><span class="sum-num" style="color:#065F46">100%</span><span class="sum-lbl">Tasa de Éxito</span></div>
   </div>
 
@@ -384,6 +384,14 @@ td:last-child{padding-right:1.75rem}
           <td class="td-entrada">Piscina: Los Álamos<br>3 visitas completadas</td>
           <td>Total de insumos y costo por visita</td>
           <td>Historial expandible con subtotales y costo total</td>
+          <td><span class="badge b-ok">Aprobado</span></td>
+        </tr>
+        <tr>
+          <td class="td-id">CP15</td>
+          <td><strong>Calcular dosificación química</strong></td>
+          <td class="td-entrada">Volumen: 50.000 L<br>pH actual: 6.5<br>Cloro libre: 0.4 ppm</td>
+          <td>Dosificación correcta: cantidad de cada insumo en kg/L</td>
+          <td>Panel muestra: Cloro 1,5 kg · pH+ 0,8 kg · Alguicida 0,3 L</td>
           <td><span class="badge b-ok">Aprobado</span></td>
         </tr>
       </tbody>
@@ -664,6 +672,99 @@ td:last-child{padding-right:1.75rem}
                 <tr style="border-bottom:1px solid #e2e8f0"><td style="font-size:6.5px;color:#7A8FA6;padding:.15rem .3rem">Cloro granulado</td><td style="font-size:6.5px;color:#7A8FA6;text-align:right;padding:.15rem .3rem">2,5 kg</td><td style="font-size:6.5px;color:#7A8FA6;text-align:right;padding:.15rem .3rem">$8.500</td><td style="font-size:7px;font-weight:600;color:#1B2A3B;text-align:right;padding:.15rem .3rem">$21.250</td></tr>
                 <tr><td style="font-size:6.5px;color:#7A8FA6;padding:.15rem .3rem">pH+ Regulador</td><td style="font-size:6.5px;color:#7A8FA6;text-align:right;padding:.15rem .3rem">1 kg</td><td style="font-size:6.5px;color:#7A8FA6;text-align:right;padding:.15rem .3rem">$9.500</td><td style="font-size:7px;font-weight:600;color:#1B2A3B;text-align:right;padding:.15rem .3rem">$9.500</td></tr>
               </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CP15 Cálculo Químico -->
+    <div class="ev-item" style="grid-column:1/-1">
+      <div class="ev-label"><span class="ev-id">CP15</span> Calculadora de Dosificación Química</div>
+      <div class="browser">
+        <div class="browser-bar">
+          <div class="browser-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <div class="browser-url">localhost:5173/visitas · Modal: Calcular Dosificación</div>
+        </div>
+        <div class="screen" style="background:#f8fafc;padding:.9rem">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem">
+            <!-- Inputs -->
+            <div style="background:#fff;border:1px solid #D4E0EE;border-radius:4px;padding:.65rem">
+              <div style="font-size:8.5px;font-weight:700;color:#0D3B6E;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.55rem;border-bottom:1px solid #D4E0EE;padding-bottom:.35rem">Parámetros de la Piscina</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:.4rem;margin-bottom:.45rem">
+                <div>
+                  <div style="font-size:7px;color:#7A8FA6;margin-bottom:.2rem">Volumen (litros)</div>
+                  <div style="background:#f0f5fb;border:1.5px solid #0ea5e9;border-radius:3px;padding:.3rem .45rem;font-size:8px;font-weight:600;color:#0D3B6E">50.000</div>
+                </div>
+                <div>
+                  <div style="font-size:7px;color:#7A8FA6;margin-bottom:.2rem">Tipo de agua</div>
+                  <div style="background:#f0f5fb;border:1px solid #D4E0EE;border-radius:3px;padding:.3rem .45rem;font-size:8px;color:#1B2A3B">Dulce</div>
+                </div>
+              </div>
+              <div style="font-size:8px;font-weight:600;color:#1B2A3B;margin-bottom:.35rem">Lectura actual de parámetros</div>
+              <div style="display:grid;gap:.3rem">
+                <div style="display:flex;align-items:center;gap:.5rem;background:#FEF3C7;border-radius:3px;padding:.3rem .45rem">
+                  <div style="font-size:7px;font-weight:600;color:#92400E;flex:1">pH actual</div>
+                  <div style="font-size:8.5px;font-weight:700;color:#92400E">6.5</div>
+                  <div style="font-size:7px;color:#92400E;background:rgba(146,64,14,.12);padding:.1rem .35rem;border-radius:10px">Bajo — óptimo 7.2–7.6</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:.5rem;background:#FEE2E2;border-radius:3px;padding:.3rem .45rem">
+                  <div style="font-size:7px;font-weight:600;color:#B91C1C;flex:1">Cloro libre (ppm)</div>
+                  <div style="font-size:8.5px;font-weight:700;color:#B91C1C">0.4</div>
+                  <div style="font-size:7px;color:#B91C1C;background:rgba(185,28,28,.1);padding:.1rem .35rem;border-radius:10px">Crítico — óptimo 1.0–3.0</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:.5rem;background:#D1FAE5;border-radius:3px;padding:.3rem .45rem">
+                  <div style="font-size:7px;font-weight:600;color:#065F46;flex:1">Alcalinidad (ppm)</div>
+                  <div style="font-size:8.5px;font-weight:700;color:#065F46">95</div>
+                  <div style="font-size:7px;color:#065F46;background:rgba(6,95,70,.1);padding:.1rem .35rem;border-radius:10px">Normal — óptimo 80–120</div>
+                </div>
+              </div>
+              <div style="margin-top:.45rem;background:#0D3B6E;border-radius:3px;padding:.35rem;text-align:center;font-size:7.5px;font-weight:700;color:#fff;cursor:pointer">Calcular Dosificación →</div>
+            </div>
+            <!-- Resultados -->
+            <div style="background:#fff;border:1px solid #D4E0EE;border-radius:4px;padding:.65rem">
+              <div style="font-size:8.5px;font-weight:700;color:#0D3B6E;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.55rem;border-bottom:1px solid #D4E0EE;padding-bottom:.35rem;display:flex;justify-content:space-between;align-items:center">
+                Dosificación Recomendada
+                <span style="font-size:7px;font-weight:600;color:#065F46;background:#D1FAE5;padding:.15rem .45rem;border-radius:10px">Calculado</span>
+              </div>
+              <!-- Producto 1 -->
+              <div style="border:1px solid #D4E0EE;border-radius:4px;padding:.45rem;margin-bottom:.35rem">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem">
+                  <div style="font-size:8px;font-weight:600;color:#1B2A3B">Cloro granulado (65%)</div>
+                  <div style="font-size:10px;font-weight:700;color:#0D3B6E">1,50 kg</div>
+                </div>
+                <div style="background:#e5e7eb;border-radius:10px;height:4px;margin-bottom:.2rem"><div style="width:85%;height:4px;background:#0ea5e9;border-radius:10px"></div></div>
+                <div style="display:flex;justify-content:space-between"><div style="font-size:6.5px;color:#7A8FA6">Eleva cloro libre a 2.4 ppm</div><div style="font-size:6.5px;color:#7A8FA6">Stock: 50 kg ✓</div></div>
+              </div>
+              <!-- Producto 2 -->
+              <div style="border:1px solid #D4E0EE;border-radius:4px;padding:.45rem;margin-bottom:.35rem">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem">
+                  <div style="font-size:8px;font-weight:600;color:#1B2A3B">pH+ Regulador sódico</div>
+                  <div style="font-size:10px;font-weight:700;color:#0D3B6E">0,80 kg</div>
+                </div>
+                <div style="background:#e5e7eb;border-radius:10px;height:4px;margin-bottom:.2rem"><div style="width:70%;height:4px;background:#10b981;border-radius:10px"></div></div>
+                <div style="display:flex;justify-content:space-between"><div style="font-size:6.5px;color:#7A8FA6">Eleva pH de 6.5 a 7.4</div><div style="font-size:6.5px;color:#7A8FA6">Stock: 15 kg ✓</div></div>
+              </div>
+              <!-- Producto 3 -->
+              <div style="border:1px solid #D4E0EE;border-radius:4px;padding:.45rem;margin-bottom:.45rem">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem">
+                  <div style="font-size:8px;font-weight:600;color:#1B2A3B">Alguicida preventivo</div>
+                  <div style="font-size:10px;font-weight:700;color:#0D3B6E">0,30 L</div>
+                </div>
+                <div style="background:#e5e7eb;border-radius:10px;height:4px;margin-bottom:.2rem"><div style="width:30%;height:4px;background:#f59e0b;border-radius:10px"></div></div>
+                <div style="display:flex;justify-content:space-between"><div style="font-size:6.5px;color:#7A8FA6">Dosis preventiva estándar</div><div style="font-size:6.5px;color:#f59e0b">Stock: 6 L — revisar</div></div>
+              </div>
+              <!-- Total costo -->
+              <div style="background:#f0f5fb;border-radius:3px;padding:.4rem;display:flex;justify-content:space-between;align-items:center">
+                <div>
+                  <div style="font-size:7px;color:#7A8FA6">Costo estimado de insumos</div>
+                  <div style="font-size:9.5px;font-weight:700;color:#1B2A3B">$21.010</div>
+                </div>
+                <div style="text-align:right">
+                  <div style="font-size:7px;color:#7A8FA6">Tiempo estimado visita</div>
+                  <div style="font-size:9.5px;font-weight:700;color:#0D3B6E">~90 min</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
