@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PoolTech — Entrega Final: Casos de Prueba y Control de Versiones</title>
+<style>
+/* ── Paleta DuocUC ── */
+:root {
+  --yellow:   #F5C400;
+  --navy:     #1A2E5E;
+  --navy-l:   #2E4A8C;
+  --ink:      #1A1A1A;
+  --muted:    #555;
+  --border:   #CCCCCC;
+  --row-alt:  #FFFBEA;
+  --ok:       #1B5E20;
+  --ok-bg:    #C8E6C9;
+  --fail:     #B71C1C;
+  --fail-bg:  #FFCDD2;
+}
+
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { font-size: 12pt; }
+body {
+  font-family: Arial, 'Helvetica Neue', sans-serif;
+  color: var(--ink);
+  background: #E0E0E0;
+  line-height: 1.55;
+}
+
+/* ── Página A4 ── */
+.page {
+  width: 210mm;
+  min-height: 297mm;
+  background: #fff;
+  margin: 0 auto 16px;
+  padding: 18mm 20mm 18mm 25mm;
+  position: relative;
+  box-shadow: 0 2px 12px rgba(0,0,0,.18);
+}
+
+/* ── Logo DuocUC simulado ── */
+.duoc-logo {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 6mm;
+}
+.duoc-d { font-family: 'Arial Black', Arial, sans-serif; font-size: 22pt; font-weight: 900; color: var(--yellow); letter-spacing: -.5px; }
+.duoc-oc { font-family: 'Arial Black', Arial, sans-serif; font-size: 22pt; font-weight: 900; color: var(--navy); letter-spacing: -.5px; }
+.duoc-uc-box { display: flex; align-items: center; }
+.duoc-circle {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--yellow);
+  display: flex; align-items: center; justify-content: center;
+  margin-left: 3px;
+}
+.duoc-circle span { font-size: 10pt; font-weight: 900; color: var(--navy); font-family: 'Arial Black', Arial; }
+
+/* ── Portada ── */
+.cover { text-align: center; padding-top: 15mm; }
+.cover-title {
+  font-size: 28pt;
+  font-weight: bold;
+  font-style: italic;
+  text-decoration: underline;
+  color: var(--ink);
+  line-height: 1.3;
+  margin-bottom: 8mm;
+  text-underline-offset: 4px;
+}
+.cover-pool-img {
+  width: 140mm;
+  height: 75mm;
+  background: linear-gradient(160deg,#0369a1 0%,#0ea5e9 40%,#38bdf8 70%,#7dd3fc 100%);
+  border-radius: 3px;
+  margin: 0 auto 10mm;
+  position: relative;
+  overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+.cover-pool-img::before {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 35mm;
+  background: rgba(2,100,168,.5);
+  border-radius: 50% 50% 0 0 / 20px 20px 0 0;
+}
+.cover-pool-icon { font-size: 60pt; z-index: 1; opacity: .85; }
+.cover-info {
+  text-align: left;
+  margin-top: 10mm;
+  font-size: 11pt;
+  line-height: 1.7;
+}
+.cover-info strong { display: inline-block; width: 80px; }
+
+/* ── Índice ── */
+.toc h2 { font-size: 16pt; text-align: center; margin-bottom: 6mm; font-weight: bold; }
+.toc-row { display: flex; justify-content: space-between; border-bottom: 1px dotted var(--border); padding: 1.5mm 0; font-size: 11pt; }
+.toc-row.h2 { font-weight: bold; }
+.toc-row.h3 { padding-left: 6mm; color: var(--muted); }
+
+/* ── Secciones ── */
+.section-page { }
+.section-title {
+  font-size: 16pt;
+  font-weight: bold;
+  color: var(--ink);
+  text-align: center;
+  margin-bottom: 5mm;
+  padding-bottom: 2mm;
+}
+.subsection-title {
+  font-size: 13pt;
+  font-weight: bold;
+  color: var(--navy);
+  margin: 5mm 0 2mm;
+}
+.body-text {
+  font-size: 10.5pt;
+  text-align: justify;
+  margin-bottom: 3mm;
+  line-height: 1.6;
+}
+.body-text + .body-text { margin-top: 0; }
+
+/* ── Tablas ── */
+.t-wrap { overflow-x: auto; margin: 3mm 0 5mm; }
+table { width: 100%; border-collapse: collapse; font-size: 10pt; }
+thead th {
+  background: var(--yellow);
+  color: var(--ink);
+  font-weight: bold;
+  padding: 4px 7px;
+  text-align: left;
+  border: 1px solid #A08800;
+}
+tbody tr:nth-child(odd)  td { background: #fff; }
+tbody tr:nth-child(even) td { background: var(--row-alt); }
+td { padding: 4px 7px; border: 1px solid var(--border); vertical-align: top; font-size: 10pt; line-height: 1.45; }
+.td-id { font-family: 'Courier New', monospace; font-weight: bold; color: var(--navy); white-space: nowrap; text-align: center; }
+.badge { display: inline-block; font-size: 8.5pt; font-weight: bold; padding: 1px 6px; border-radius: 2px; }
+.b-ok { background: var(--ok-bg); color: var(--ok); }
+.b-fail { background: var(--fail-bg); color: var(--fail); }
+.b-pend { background: #FFF9C4; color: #F57F17; }
+
+/* Tabla versiones */
+.ver-badge { display: inline-block; font-size: 8pt; font-weight: bold; padding: 1px 6px; border-radius: 2px; }
+.v-feat { background: #DBEAFE; color: #1E40AF; }
+.v-fix  { background: #D1FAE5; color: #065F46; }
+.v-docs { background: #F3E8FF; color: #6B21A8; }
+.v-infra{ background: #FEF3C7; color: #92400E; }
+.v-sec  { background: #FEE2E2; color: #B91C1C; }
+
+/* ── Resumen estadístico ── */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 3mm;
+  margin: 4mm 0;
+}
+.stat-box {
+  border: 2px solid var(--yellow);
+  border-radius: 3px;
+  padding: 3mm;
+  text-align: center;
+}
+.stat-num { font-size: 22pt; font-weight: bold; display: block; line-height: 1; }
+.stat-lbl { font-size: 8pt; font-weight: bold; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); display: block; margin-top: 1mm; }
+
+/* ── Evidencias ── */
+.ev-section { margin-top: 4mm; }
+.ev-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4mm; margin-top: 3mm; }
+.ev-grid.full { grid-template-columns: 1fr; }
+.ev-card { }
+.ev-label {
+  font-size: 9pt;
+  font-weight: bold;
+  color: var(--navy);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin-bottom: 1.5mm;
+  display: flex; align-items: center; gap: 2mm;
+}
+.ev-code { color: var(--yellow); background: var(--navy); padding: 1px 5px; border-radius: 2px; font-family: 'Courier New',monospace; }
+
+/* Navegador */
+.browser { border: 1px solid var(--border); border-radius: 4px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,.1); }
+.browser-bar { background: #E8E8E8; padding: 2.5px 6px; display: flex; align-items: center; gap: 4px; border-bottom: 1px solid var(--border); }
+.dots { display: flex; gap: 3px; }
+.dots span { width: 7px; height: 7px; border-radius: 50%; display: block; }
+.d-r{background:#fc615d}.d-y{background:#fdbc40}.d-g{background:#34c749}
+.url-bar { flex:1; background:#fff; border:1px solid var(--border); border-radius:2px; font-size:7.5pt; color:#888; padding:1px 5px; font-family:'Courier New',monospace; }
+
+/* ── Mockups ── */
+.screen { background:#f8fafc; min-height:130px; overflow:hidden; }
+
+/* Login */
+.mock-login { background:linear-gradient(135deg,#1e5799,#0ea5e9,#38bdf8); display:flex; align-items:center; justify-content:center; min-height:155px; }
+.login-card { background:rgba(255,255,255,.97); border-radius:8px; padding:10px 12px; width:130px; box-shadow:0 6px 24px rgba(0,0,0,.2); }
+.lc-logo { width:22px; height:22px; background:linear-gradient(135deg,#0D3B6E,#0ea5e9); border-radius:5px; margin:0 auto 3px; }
+.lc-brand { text-align:center; font-size:7.5pt; font-weight:700; color:#1B2A3B; }
+.lc-sub { text-align:center; font-size:6pt; color:#7A8FA6; margin-bottom:6px; }
+.lc-f { background:#f0f5fb; border:1px solid #D4E0EE; border-radius:3px; padding:2.5px 4px; font-size:6.5pt; margin-bottom:3px; color:#1B2A3B; }
+.lc-btn { background:#0D3B6E; color:#fff; border-radius:3px; padding:3px; font-size:6.5pt; text-align:center; font-weight:700; margin-top:4px; }
+
+/* Dashboard */
+.mock-dash { padding:6px; }
+.db-cards { display:grid; grid-template-columns:repeat(4,1fr); gap:3px; margin-bottom:5px; }
+.db-c { background:#fff; border:1px solid #D4E0EE; border-radius:3px; padding:3px; display:flex; align-items:center; gap:3px; }
+.db-ico { width:13px; height:13px; border-radius:2px; flex-shrink:0; }
+.db-n { font-size:9pt; font-weight:700; color:#1B2A3B; line-height:1; }
+.db-l { font-size:5.5pt; color:#7A8FA6; }
+.db-bot { display:grid; grid-template-columns:2fr 1fr; gap:3px; }
+.db-pan { background:#fff; border:1px solid #D4E0EE; border-radius:3px; padding:3px; }
+.db-pt { font-size:5.5pt; font-weight:700; text-transform:uppercase; color:#7A8FA6; margin-bottom:3px; }
+.db-vr { display:flex; justify-content:space-between; padding:1.5px 0; border-bottom:1px solid #f0f5fb; }
+.db-vr:last-child{border-bottom:none}
+.db-vn{font-size:6pt;color:#1B2A3B;font-weight:500}.db-vt{font-size:5.5pt;color:#7A8FA6}
+.pill{font-size:5.5pt;font-weight:600;padding:1px 3px;border-radius:8px}
+.pp{background:#FEF3C7;color:#92400E}.pg{background:#D1FAE5;color:#065F46}.pb{background:#DBEAFE;color:#1E40AF}
+
+/* Inventario */
+.mock-inv { padding:6px; }
+.inv-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:3px; }
+.inv-card { background:#fff; border:1px solid #D4E0EE; border-radius:3px; padding:4px; }
+.inv-card.crit { border-color:#fca5a5; }
+.inv-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:3px; }
+.inv-ico { width:13px; height:13px; border-radius:2px; flex-shrink:0; }
+.inv-nm { font-size:6.5pt; font-weight:600; color:#1B2A3B; flex:1; margin:0 3px; }
+.inv-bw { background:#e5e7eb; border-radius:8px; height:3.5px; margin-bottom:2.5px; overflow:hidden; }
+.inv-bar { height:3.5px; border-radius:8px; }
+.bar-g{background:#10b981}.bar-y{background:#f59e0b}.bar-r{background:#ef4444}
+.b-n{background:#C8E6C9;color:#1B5E20}.b-l{background:#FFF9C4;color:#F57F17}.b-c{background:#FFCDD2;color:#B71C1C}
+.inv-nums { display:grid; grid-template-columns:repeat(3,1fr); gap:2px; }
+.inv-ns { background:#f8fafc; border-radius:2px; padding:2px; text-align:center; }
+.inv-nv { font-size:7.5pt; font-weight:700; color:#1B2A3B; line-height:1; }
+.inv-nl { font-size:5pt; color:#7A8FA6; }
+
+/* Rutas */
+.mock-rutas { padding:6px; }
+.rt-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:3px; margin-bottom:5px; }
+.rt-st { background:#fff; border:1px solid #D4E0EE; border-radius:3px; padding:3px; display:flex; align-items:center; gap:3px; }
+.rt-ico { width:14px; height:14px; border-radius:2px; display:flex; align-items:center; justify-content:center; font-size:7pt; color:#fff; flex-shrink:0; }
+.rt-n { font-size:9.5pt; font-weight:700; color:#1B2A3B; line-height:1; }
+.rt-l { font-size:5.5pt; color:#7A8FA6; }
+.rt-tec { background:#fff; border:1px solid #D4E0EE; border-radius:3px; margin-bottom:3px; overflow:hidden; }
+.rt-th { background:#f0f5fb; padding:2.5px 5px; display:flex; justify-content:space-between; border-bottom:1px solid #D4E0EE; }
+.rt-tn { font-size:6.5pt; font-weight:700; color:#1B2A3B; }
+.rt-tc { font-size:6pt; color:#7A8FA6; }
+.rt-stop { display:flex; align-items:center; gap:3px; padding:2.5px 5px; border-bottom:1px solid #f7fafd; }
+.rt-stop:last-child{border-bottom:none}
+.rt-nc { width:11px; height:11px; border-radius:50%; background:#0D3B6E; color:#fff; font-size:5.5pt; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.rt-nc.out { background:#fff; color:#0D3B6E; border:1.5px solid #0D3B6E; }
+.rt-sn { font-size:6.5pt; font-weight:500; color:#1B2A3B; flex:1; }
+.rt-sl { font-size:5.5pt; color:#7A8FA6; }
+
+/* Portal */
+.mock-portal { }
+.portal-hd { background:#0D3B6E; padding:4px 7px; display:flex; justify-content:space-between; align-items:center; }
+.portal-br { font-size:7pt; font-weight:700; color:#fff; }
+.portal-ur { font-size:5.5pt; color:rgba(255,255,255,.6); }
+.portal-body { padding:6px; }
+.portal-plan { background:linear-gradient(90deg,#0D3B6E,#1A5298); border-radius:4px; padding:5px 7px; margin-bottom:5px; display:flex; justify-content:space-between; }
+.pp-l { font-size:6pt; color:rgba(255,255,255,.6); margin-bottom:1px; }
+.pp-v { font-size:10pt; font-weight:700; color:#fff; line-height:1; }
+.pp-b { font-size:5.5pt; font-weight:600; color:#fff; background:rgba(255,255,255,.2); padding:1.5px 4px; border-radius:2px; margin-top:2px; display:inline-block; }
+.pool-grid { display:grid; grid-template-columns:1fr 1fr; gap:3px; }
+.pc { background:#fff; border:1px solid #D4E0EE; border-radius:3px; padding:4px; }
+.pc-n { font-size:6.5pt; font-weight:600; color:#1B2A3B; margin-bottom:1px; }
+.pc-i { font-size:5.5pt; color:#7A8FA6; margin-bottom:3px; }
+.pc-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:2px; margin-bottom:3px; }
+.pcs { background:#f0f5fb; border-radius:2px; padding:2px; text-align:center; }
+.pcs-n { font-size:8pt; font-weight:700; color:#1B2A3B; line-height:1; }
+.pcs-l { font-size:5pt; color:#7A8FA6; }
+.pc-btns { display:flex; gap:2px; }
+.pcb-a { flex:1; text-align:center; font-size:5.5pt; font-weight:600; padding:2px; border-radius:2px; background:#FEF3C7; color:#92400E; }
+.pcb-m { flex:1; text-align:center; font-size:5.5pt; font-weight:600; padding:2px; border-radius:2px; background:#DBEAFE; color:#1E40AF; }
+
+/* Cálculo químico */
+.mock-chem { padding:6px; display:grid; grid-template-columns:1fr 1fr; gap:5px; }
+.chem-box { background:#fff; border:1px solid #D4E0EE; border-radius:3px; padding:5px; }
+.chem-title { font-size:7pt; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:#0D3B6E; border-bottom:1px solid #D4E0EE; padding-bottom:3px; margin-bottom:4px; }
+.chem-param { display:flex; align-items:center; gap:3px; border-radius:2px; padding:2.5px 3px; margin-bottom:2px; }
+.chem-lbl { font-size:6pt; font-weight:600; flex:1; }
+.chem-val { font-size:7.5pt; font-weight:700; }
+.chem-tag { font-size:5.5pt; font-weight:600; padding:1px 4px; border-radius:8px; }
+.c-ok{background:#C8E6C9;color:#1B5E20}.c-lo{background:#FFF9C4;color:#F57F17}.c-hi{background:#FFCDD2;color:#B71C1C}
+.chem-calc-btn { background:#0D3B6E; color:#fff; border-radius:2px; padding:3px; text-align:center; font-size:6.5pt; font-weight:700; margin-top:5px; }
+.chem-prod { border:1px solid #D4E0EE; border-radius:3px; padding:3.5px; margin-bottom:3px; }
+.chem-pn { display:flex; justify-content:space-between; margin-bottom:2px; }
+.chem-nm { font-size:6.5pt; font-weight:600; color:#1B2A3B; }
+.chem-qty { font-size:8.5pt; font-weight:700; color:#0D3B6E; }
+.chem-bw { background:#e5e7eb; border-radius:8px; height:3px; margin-bottom:2px; overflow:hidden; }
+.chem-bf { height:3px; border-radius:8px; }
+.bf1{background:#0ea5e9}.bf2{background:#10b981}.bf3{background:#f59e0b}
+.chem-sub { display:flex; justify-content:space-between; }
+.chem-sl { font-size:5.5pt; color:#7A8FA6; }
+.chem-total { background:#f0f5fb; border-radius:2px; padding:3px; display:flex; justify-content:space-between; margin-top:5px; }
+.ct-n { font-size:9pt; font-weight:700; color:#1B2A3B; }
+.ct-l { font-size:6pt; color:#7A8FA6; }
+
+/* ── Control de versiones ── */
+.ver-timeline { display:flex; align-items:center; gap:0; margin:4mm 0 5mm; overflow-x:auto; padding:2mm 0; }
+.ver-dot { width:32px; height:32px; border-radius:50%; background:var(--navy); color:#fff; font-size:7.5pt; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; border:2px solid var(--yellow); }
+.ver-dot.active { background:var(--yellow); color:var(--navy); }
+.ver-line { flex:1; height:2px; background:var(--border); min-width:5mm; }
+.ver-label { font-size:7pt; text-align:center; color:var(--muted); margin-top:1mm; }
+
+/* ── Divisores ── */
+.hr { border:none; border-top:2px solid var(--yellow); margin:4mm 0; }
+.hr-thin { border:none; border-top:1px solid var(--border); margin:3mm 0; }
+.page-break { page-break-before: always; }
+
+/* ── Footer ── */
+.page-footer {
+  position:absolute; bottom:10mm; left:25mm; right:20mm;
+  display:flex; justify-content:space-between; align-items:center;
+  font-size:8pt; color:var(--muted); border-top:1px solid var(--border); padding-top:2mm;
+}
+
+/* ── Botón imprimir ── */
+.print-btn-wrap { position:fixed; bottom:20px; right:24px; z-index:999; }
+.print-btn {
+  display:flex; align-items:center; gap:6px;
+  background:var(--navy); color:#fff; border:none; border-radius:4px;
+  padding:10px 18px; font-size:11pt; font-weight:700; cursor:pointer;
+  box-shadow:0 4px 16px rgba(0,0,0,.3);
+}
+.print-btn:hover { background:var(--navy-l); }
+
+@media print {
+  body { background:#fff; }
+  .page { box-shadow:none; margin:0; width:100%; padding:15mm 18mm 15mm 22mm; }
+  .print-btn-wrap { display:none; }
+  .page-break { page-break-before:always; }
+  @page { size:A4 portrait; margin:0; }
+}
+</style>
+</head>
+<body>
+
+<div class="print-btn-wrap">
+  <button class="print-btn" onclick="window.print()">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+    Descargar PDF
+  </button>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PORTADA
+     ══════════════════════════════════════════ -->
+<div class="page">
+  <div class="duoc-logo">
+    <span class="duoc-d">Duoc</span><span class="duoc-oc">UC</span>
+    <div class="duoc-uc-box">
+      <div class="duoc-circle"><span>⚙</span></div>
+    </div>
+  </div>
+
+  <div class="cover">
+    <div class="cover-title">
+      MANTENCIÓN<br>DE<br>PISCINAS<br>ESPECIALIZADA
+    </div>
+
+    <div class="cover-pool-img">
+      <div class="cover-pool-icon">🏊</div>
+    </div>
+
+    <div class="cover-info">
+      <p><strong>Título:</strong> Entrega Final — Casos de Prueba, Evidencias y Control de Versiones</p>
+      <br>
+      <p><strong>Alumnos:</strong> Benjamin Sepúlveda</p>
+      <p style="margin-left:80px">Felipe Sepúlveda</p>
+      <p style="margin-left:80px">Javier Gajardo</p>
+      <p><strong>Profesor:</strong> Alvaro Jaque</p>
+      <p><strong>Sección:</strong> 001-V</p>
+      <p><strong>Fecha:</strong> 09 de Julio 2026</p>
+      <p><strong>Versión:</strong> v1.0 — Release</p>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>DuocUC · Ingeniería de Software · 2026</span>
+    <span>1</span>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     ÍNDICE
+     ══════════════════════════════════════════ -->
+<div class="page">
+  <div class="duoc-logo"><span class="duoc-d">Duoc</span><span class="duoc-oc">UC</span><div class="duoc-uc-box"><div class="duoc-circle"><span>⚙</span></div></div></div>
+
+  <div class="toc">
+    <h2>Índice</h2>
+    <div class="toc-row h2"><span>1. Casos de Prueba</span><span>3</span></div>
+    <div class="toc-row h3"><span>1.1 Resumen de Resultados</span><span>3</span></div>
+    <div class="toc-row h3"><span>1.2 Planilla de Casos de Prueba (CP01 – CP15)</span><span>3</span></div>
+    <div class="toc-row h2"><span>2. Evidencias del Sistema</span><span>5</span></div>
+    <div class="toc-row h3"><span>2.1 Login — CP01</span><span>5</span></div>
+    <div class="toc-row h3"><span>2.2 Dashboard — CP10</span><span>5</span></div>
+    <div class="toc-row h3"><span>2.3 Gestión de Clientes — CP03</span><span>5</span></div>
+    <div class="toc-row h3"><span>2.4 Registro de Visitas — CP05</span><span>5</span></div>
+    <div class="toc-row h3"><span>2.5 Inventario con Alertas — CP08/CP09</span><span>6</span></div>
+    <div class="toc-row h3"><span>2.6 Rutas Inteligentes — CP10/CP11</span><span>6</span></div>
+    <div class="toc-row h3"><span>2.7 Portal del Cliente — CP12/CP13</span><span>6</span></div>
+    <div class="toc-row h3"><span>2.8 Calculadora de Dosificación Química — CP15</span><span>6</span></div>
+    <div class="toc-row h2"><span>3. Control de Versiones v1.0</span><span>7</span></div>
+    <div class="toc-row h3"><span>3.1 Historial de Cambios</span><span>7</span></div>
+    <div class="toc-row h3"><span>3.2 Línea de Tiempo de Versiones</span><span>8</span></div>
+  </div>
+
+  <div class="page-footer">
+    <span>DuocUC · Ingeniería de Software · 2026</span>
+    <span>2</span>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     CASOS DE PRUEBA
+     ══════════════════════════════════════════ -->
+<div class="page page-break">
+  <div class="duoc-logo"><span class="duoc-d">Duoc</span><span class="duoc-oc">UC</span><div class="duoc-uc-box"><div class="duoc-circle"><span>⚙</span></div></div></div>
+
+  <div class="section-title">1. Casos de Prueba</div>
+  <div class="hr"></div>
+
+  <p class="body-text">La siguiente planilla documenta los casos de prueba aplicados sobre el sistema PoolTech v1.0, cubriendo los módulos de autenticación, gestión de clientes, piscinas, visitas técnicas, inventario, rutas inteligentes, portal de cliente y cálculo de dosificación química. Todos los casos fueron ejecutados sobre el entorno funcional desplegado en <strong>localhost:5173</strong> (frontend) y <strong>localhost:3001</strong> (API).</p>
+
+  <div class="subsection-title">1.1 Resumen de Resultados</div>
+  <div class="stats-row">
+    <div class="stat-box">
+      <span class="stat-num" style="color:#1B5E20">15</span>
+      <span class="stat-lbl">Casos Aprobados</span>
+    </div>
+    <div class="stat-box">
+      <span class="stat-num" style="color:#B71C1C">0</span>
+      <span class="stat-lbl">Casos Fallidos</span>
+    </div>
+    <div class="stat-box">
+      <span class="stat-num" style="color:#0D3B6E">15</span>
+      <span class="stat-lbl">Total Casos</span>
+    </div>
+    <div class="stat-box">
+      <span class="stat-num" style="color:#1B5E20">100%</span>
+      <span class="stat-lbl">Tasa de Éxito</span>
+    </div>
+  </div>
+
+  <div class="subsection-title">1.2 Planilla de Casos de Prueba</div>
+
+  <div class="t-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="width:42px">ID</th>
+          <th style="width:28%">Caso de Prueba</th>
+          <th style="width:26%">Datos de Entrada</th>
+          <th style="width:26%">Resultado Esperado</th>
+          <th style="width:60px;text-align:center">Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="td-id">CP01</td>
+          <td><strong>Iniciar sesión con credenciales válidas</strong></td>
+          <td>Correo: admin@pooltech.cl<br>Contraseña: admin123</td>
+          <td>Acceso correcto al Dashboard con rol Administrador</td>
+          <td style="text-align:center"><span class="badge b-ok">Aprobado</span></td>
+        </tr>
+        <tr>
+          <td class="td-id">CP02</td>
+          <td><strong>Iniciar sesión con credenciales inválidas</strong></td>
+          <td>Correo: admin@pooltech.cl<br>Contraseña: incorrecta</td>
+          <td>Mensaje de error "Credenciales inválidas"</td>
+          <td style="text-align:center"><span class="badge b-ok">Aprobado</span></td>
+        </tr>
+        <tr>
+          <td class="td-id">CP03</td>
+          <td><strong>Crear cliente con datos válidos</strong></td>
+          <td>Nombre: Empresa Test SpA<br>Teléfono: +56912345678</td>
+          <td>Cliente registrado y visible en la tabla</td>
+          <td style="text-align:center"><span class="badge b-ok">Aprobado</span></td>
+        </tr>
+        <tr>
+          <td class="td-id">CP04</td>
+          <td><strong>Registrar piscina para un cliente</strong></td>
+          <td>Cliente: Empresa Test SpA<br>Capacidad: 25.000 L<br>Tipo: Dulce</td>
+          <td>Piscina creada y asociada al cliente</td>
+          <td style="text-align:center"><span class="badge b-ok">Aprobado</span></td>
+        </tr>
+        <tr>
+          <td class="td-id">CP05</td>
+          <td><strong>Registrar visita técnica</strong></td>
+          <td>Piscina: Los Álamos<br>Técnico: Carlos Reyes<br>Fecha: 2026-07-10</td>
+          <td>Visita creada con estado "Pendiente"</td>
+          <td style="text-align:center"><span class="badge b-ok">Aprobado</span></td>
+        </tr>
+        <tr>
+          <td class="td-id">CP06</td>
+          <td><strong>Cambiar estado de visita a Completada</strong></td>
+          <td>Visita existente<br>Estado nuevo: Completada</td>
+          <td>Badge cambia a verde "Completada"</td>
+          <td style="text-align:center"><span class="badge b-ok">Aprobado</span></td>
+        </tr>
+        <tr>
+          <td class="td-id">CP07</td>
+          <td><strong>Generar PDF de Control de Versiones</strong></td>
+          <td>Información completa v1.0<br>12 registros de cambio</td>
+          <td>PDF generado con tabla de cambios</td>
+          <td style="text-align:center"><span class="badge b-ok">Aprobado</span></td>
+        </tr>
+        <tr>
+          <td class="td-id">CP08</td>
+          <td><strong>Crear insumo en inventario</strong></td>
+          <td>Nombre: Cloro granulado<br>Stock: 50 kg · Precio: $8.500/kg</td>
+          <td>Tarjeta de insumo con estado Normal</td>
+          <td style="text-align:center"><span class="badge b-ok">Aprobado</span></td>
+        </tr>
+        <tr>
+          <td class="td-id">CP09</td>
+          <td><strong>Alerta de stock crítico</strong></td>
+          <td>Stock actual: 2 kg<br>Stock mínimo: 5 kg</td>
+          <td>Tarjeta con estado "Crítico" en rojo</td>
+          <td style="text-align:center"><span class="badge b-ok">Aprobado</span></td>
+        </tr>
+        <tr>
+          <td class="td-id">CP10</td>
+          <td><strong>Ver Rutas Inteligentes (Administrador)</strong></td>
+          <td>Login: admin@pooltech.cl</td>
+          <td>Menú "Rutas Inteligentes" visible y accesible</td>
+          <td style="text-align:center"><span class="badge b-ok">Aprobado</span></td>
+        </tr>
+        <tr>
+          <td class="td-id">CP11</td>
+          <td><strong>Técnico no puede ver Rutas (sin permiso)</strong></td>
+          <td>Login: carlos@pooltech.cl<br>Intento: GET /api/rutas</td>
+          <td>Error 403 — ruta no visible en sidebar</td>
+          <td style="text-align:center"><span class="badge b-ok">Aprobado</span></td>
+        </tr>
+        <tr>
+          <td class="td-id">CP12</td>
+          <td><strong>Portal Cliente — Ver mis piscinas</strong></td>
+          <td>Login: cliente@losalamos.cl</td>
+          <td>Portal con tarjetas de piscinas y mensualidad</td>
+          <td style="text-align:center"><span class="badge b-ok">Aprobado</span></td>
+        </tr>
+        <tr>
+          <td class="td-id">CP13</td>
+          <td><strong>Cliente reporta anomalía</strong></td>
+          <td>Descripción: "Agua con color verde"<br>Piscina: Área recreativa</td>
+          <td>Solicitud registrada como visita extraordinaria</td>
+          <td style="text-align:center"><span class="badge b-ok">Aprobado</span></td>
+        </tr>
+        <tr>
+          <td class="td-id">CP14</td>
+          <td><strong>Resumen de piscina con costos</strong></td>
+          <td>Piscina: Los Álamos<br>3 visitas completadas</td>
+          <td>Total de insumos y costo por visita</td>
+          <td style="text-align:center"><span class="badge b-ok">Aprobado</span></td>
+        </tr>
+        <tr>
+          <td class="td-id">CP15</td>
+          <td><strong>Calcular dosificación química</strong></td>
+          <td>Volumen: 50.000 L<br>pH actual: 6.5<br>Cloro libre: 0.4 ppm</td>
+          <td>Dosificación: Cloro 1,5 kg · pH+ 0,8 kg · Alguicida 0,3 L</td>
+          <td style="text-align:center"><span class="badge b-ok">Aprobado</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="page-footer">
+    <span>DuocUC · Ingeniería de Software · 2026</span>
+    <span>3</span>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     EVIDENCIAS — página 1
+     ══════════════════════════════════════════ -->
+<div class="page page-break">
+  <div class="duoc-logo"><span class="duoc-d">Duoc</span><span class="duoc-oc">UC</span><div class="duoc-uc-box"><div class="duoc-circle"><span>⚙</span></div></div></div>
+
+  <div class="section-title">2. Evidencias del Sistema</div>
+  <div class="hr"></div>
+
+  <p class="body-text">A continuación se presentan las capturas del sistema en funcionamiento, demostrando la correcta ejecución de los módulos probados. Las evidencias corresponden al prototipo funcional disponible en <strong>http://localhost:5173</strong>.</p>
+
+  <div class="ev-grid" style="margin-top:4mm">
+
+    <!-- CP01 Login -->
+    <div class="ev-card">
+      <div class="ev-label"><span class="ev-code">CP01</span> Pantalla de Login</div>
+      <div class="browser">
+        <div class="browser-bar"><div class="dots"><span class="d-r"></span><span class="d-y"></span><span class="d-g"></span></div><div class="url-bar">localhost:5173/login</div></div>
+        <div class="screen mock-login">
+          <div class="login-card">
+            <div class="lc-logo"></div>
+            <div class="lc-brand">PoolTech</div>
+            <div class="lc-sub">Gestión de Piscinas</div>
+            <div class="lc-f">admin@pooltech.cl</div>
+            <div class="lc-f">••••••••</div>
+            <div class="lc-btn">Ingresar →</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CP10 Dashboard -->
+    <div class="ev-card">
+      <div class="ev-label"><span class="ev-code">CP10</span> Dashboard (Administrador)</div>
+      <div class="browser">
+        <div class="browser-bar"><div class="dots"><span class="d-r"></span><span class="d-y"></span><span class="d-g"></span></div><div class="url-bar">localhost:5173/</div></div>
+        <div class="screen mock-dash">
+          <div style="font-size:7.5pt;font-weight:700;color:#1B2A3B;margin-bottom:4px">Dashboard</div>
+          <div class="db-cards">
+            <div class="db-c"><div class="db-ico" style="background:#0D3B6E"></div><div><div class="db-n">3</div><div class="db-l">Piscinas</div></div></div>
+            <div class="db-c"><div class="db-ico" style="background:#f59e0b"></div><div><div class="db-n">4</div><div class="db-l">Pendientes</div></div></div>
+            <div class="db-c"><div class="db-ico" style="background:#f97316"></div><div><div class="db-n">1</div><div class="db-l">En Progreso</div></div></div>
+            <div class="db-c"><div class="db-ico" style="background:#ef4444"></div><div><div class="db-n">2</div><div class="db-l">Alertas</div></div></div>
+          </div>
+          <div class="db-bot">
+            <div class="db-pan">
+              <div class="db-pt">Últimas Visitas</div>
+              <div class="db-vr"><div><div class="db-vn">Hotel Paraíso</div><div class="db-vt">Carlos Reyes · 08 Jul</div></div><span class="pill pb">En Progreso</span></div>
+              <div class="db-vr"><div><div class="db-vn">Los Álamos</div><div class="db-vt">María López · 10 Jul</div></div><span class="pill pp">Pendiente</span></div>
+            </div>
+            <div class="db-pan">
+              <div class="db-pt">Alertas Stock</div>
+              <div class="db-vr"><div class="db-vn">Floculante</div><span style="font-size:7pt;font-weight:700;color:#B71C1C">2 kg</span></div>
+              <div class="db-vr"><div class="db-vn">Alguicida</div><span style="font-size:7pt;font-weight:700;color:#F57F17">6 L</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CP03 Clientes -->
+    <div class="ev-card">
+      <div class="ev-label"><span class="ev-code">CP03</span> Gestión de Clientes</div>
+      <div class="browser">
+        <div class="browser-bar"><div class="dots"><span class="d-r"></span><span class="d-y"></span><span class="d-g"></span></div><div class="url-bar">localhost:5173/clientes</div></div>
+        <div class="screen" style="padding:6px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+            <span style="font-size:7.5pt;font-weight:700;color:#1B2A3B">Clientes</span>
+            <span style="background:#0D3B6E;color:#fff;font-size:6pt;font-weight:600;padding:2px 6px;border-radius:3px">+ Nuevo Cliente</span>
+          </div>
+          <table style="font-size:6pt;border-collapse:collapse;width:100%">
+            <tr style="background:#f0f5fb"><th style="padding:2px 4px;text-align:left;color:#7A8FA6;font-size:5.5pt;border:1px solid #D4E0EE">Nombre</th><th style="padding:2px 4px;text-align:left;color:#7A8FA6;font-size:5.5pt;border:1px solid #D4E0EE">Teléfono</th><th style="padding:2px 4px;text-align:left;color:#7A8FA6;font-size:5.5pt;border:1px solid #D4E0EE">Dirección</th><th style="padding:2px 4px;border:1px solid #D4E0EE"></th></tr>
+            <tr><td style="padding:2.5px 4px;border:1px solid #e2e8f0;font-weight:600">Cond. Los Álamos</td><td style="padding:2.5px 4px;border:1px solid #e2e8f0;color:#7A8FA6">+56912345678</td><td style="padding:2.5px 4px;border:1px solid #e2e8f0;color:#7A8FA6">Av. Las Condes 1234</td><td style="padding:2.5px 4px;border:1px solid #e2e8f0"><span style="color:#0ea5e9">✏</span> <span style="color:#ef4444">✕</span></td></tr>
+            <tr style="background:#FFFBEA"><td style="padding:2.5px 4px;border:1px solid #e2e8f0;font-weight:600">Hotel Paraíso</td><td style="padding:2.5px 4px;border:1px solid #e2e8f0;color:#7A8FA6">+56987654321</td><td style="padding:2.5px 4px;border:1px solid #e2e8f0;color:#7A8FA6">Costanera Norte 567</td><td style="padding:2.5px 4px;border:1px solid #e2e8f0"><span style="color:#0ea5e9">✏</span> <span style="color:#ef4444">✕</span></td></tr>
+            <tr><td style="padding:2.5px 4px;border:1px solid #e2e8f0;font-weight:600;color:#0D3B6E">Empresa Test SpA</td><td style="padding:2.5px 4px;border:1px solid #e2e8f0;color:#7A8FA6">+56912345678</td><td style="padding:2.5px 4px;border:1px solid #e2e8f0;color:#7A8FA6">Av. Test 123</td><td style="padding:2.5px 4px;border:1px solid #e2e8f0"><span style="color:#0ea5e9">✏</span> <span style="color:#ef4444">✕</span></td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- CP05 Visitas -->
+    <div class="ev-card">
+      <div class="ev-label"><span class="ev-code">CP05</span> Registro de Visita Técnica</div>
+      <div class="browser">
+        <div class="browser-bar"><div class="dots"><span class="d-r"></span><span class="d-y"></span><span class="d-g"></span></div><div class="url-bar">localhost:5173/visitas</div></div>
+        <div class="screen" style="padding:6px">
+          <div style="font-size:7.5pt;font-weight:700;color:#1B2A3B;margin-bottom:4px">Visitas Técnicas</div>
+          <div style="background:#fff;border:1px solid #D4E0EE;border-radius:3px;padding:5px;display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-bottom:3px">
+            <div style="background:#f0f5fb;border:1.5px solid #0ea5e9;border-radius:2px;padding:2.5px 4px;font-size:6.5pt;color:#0D3B6E;font-weight:500">Los Álamos — Principal</div>
+            <div style="background:#f0f5fb;border:1px solid #D4E0EE;border-radius:2px;padding:2.5px 4px;font-size:6.5pt;color:#1B2A3B">Técnico ID: 3</div>
+            <div style="background:#f0f5fb;border:1px solid #D4E0EE;border-radius:2px;padding:2.5px 4px;font-size:6.5pt;color:#1B2A3B">2026-07-10T10:00</div>
+            <div style="background:#f0f5fb;border:1px solid #D4E0EE;border-radius:2px;padding:2.5px 4px;font-size:6.5pt;color:#7A8FA6">Mantención mensual</div>
+          </div>
+          <div style="display:flex;gap:3px;margin-bottom:4px">
+            <div style="background:#0D3B6E;color:#fff;font-size:6.5pt;font-weight:600;padding:2.5px 7px;border-radius:2px">Crear</div>
+            <div style="background:#fff;color:#7A8FA6;font-size:6.5pt;font-weight:600;padding:2.5px 7px;border-radius:2px;border:1px solid #D4E0EE">Cancelar</div>
+          </div>
+          <table style="font-size:6pt;border-collapse:collapse;width:100%">
+            <tr style="background:#f0f5fb"><th style="padding:2px 4px;text-align:left;color:#7A8FA6;font-size:5.5pt;border:1px solid #D4E0EE">Cliente</th><th style="padding:2px 4px;text-align:left;color:#7A8FA6;font-size:5.5pt;border:1px solid #D4E0EE">Técnico</th><th style="padding:2px 4px;text-align:left;color:#7A8FA6;font-size:5.5pt;border:1px solid #D4E0EE">Fecha</th><th style="padding:2px 4px;border:1px solid #D4E0EE">Estado</th></tr>
+            <tr><td style="padding:2.5px 4px;border:1px solid #e2e8f0;font-weight:600">Hotel Paraíso</td><td style="padding:2.5px 4px;border:1px solid #e2e8f0;color:#7A8FA6">Carlos R.</td><td style="padding:2.5px 4px;border:1px solid #e2e8f0;color:#7A8FA6">08/07</td><td style="padding:2.5px 4px;border:1px solid #e2e8f0"><span class="pill pb" style="font-size:5.5pt">En Progreso</span></td></tr>
+            <tr style="background:#FFFBEA"><td style="padding:2.5px 4px;border:1px solid #e2e8f0;font-weight:600">Los Álamos</td><td style="padding:2.5px 4px;border:1px solid #e2e8f0;color:#7A8FA6">María L.</td><td style="padding:2.5px 4px;border:1px solid #e2e8f0;color:#7A8FA6">10/07</td><td style="padding:2.5px 4px;border:1px solid #e2e8f0"><span class="pill pp" style="font-size:5.5pt">Pendiente</span></td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="page-footer">
+    <span>DuocUC · Ingeniería de Software · 2026</span>
+    <span>4 – 5</span>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     EVIDENCIAS — página 2
+     ══════════════════════════════════════════ -->
+<div class="page page-break">
+  <div class="duoc-logo"><span class="duoc-d">Duoc</span><span class="duoc-oc">UC</span><div class="duoc-uc-box"><div class="duoc-circle"><span>⚙</span></div></div></div>
+
+  <div class="ev-grid">
+
+    <!-- CP08/09 Inventario -->
+    <div class="ev-card">
+      <div class="ev-label"><span class="ev-code">CP08/09</span> Inventario con Alertas de Stock</div>
+      <div class="browser">
+        <div class="browser-bar"><div class="dots"><span class="d-r"></span><span class="d-y"></span><span class="d-g"></span></div><div class="url-bar">localhost:5173/inventario</div></div>
+        <div class="screen mock-inv">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+            <span style="font-size:7.5pt;font-weight:700;color:#1B2A3B">Inventario de Insumos</span>
+            <span style="background:#0D3B6E;color:#fff;font-size:6pt;font-weight:600;padding:2px 5px;border-radius:2px">+ Nuevo</span>
+          </div>
+          <div class="inv-grid">
+            <div class="inv-card">
+              <div class="inv-top"><div class="inv-ico" style="background:#fef3c7"></div><div class="inv-nm">Cloro granulado</div><span class="badge b-n" style="font-size:6pt;padding:1px 4px">Normal</span></div>
+              <div class="inv-bw"><div class="inv-bar bar-g" style="width:75%"></div></div>
+              <div class="inv-nums"><div class="inv-ns"><div class="inv-nv">50</div><div class="inv-nl">Actual</div></div><div class="inv-ns"><div class="inv-nv">10</div><div class="inv-nl">Mín</div></div><div class="inv-ns"><div class="inv-nv">$8.5K</div><div class="inv-nl">Precio</div></div></div>
+            </div>
+            <div class="inv-card">
+              <div class="inv-top"><div class="inv-ico" style="background:#dbeafe"></div><div class="inv-nm">Ácido muriático</div><span class="badge b-l" style="font-size:6pt;padding:1px 4px">Bajo</span></div>
+              <div class="inv-bw"><div class="inv-bar bar-y" style="width:42%"></div></div>
+              <div class="inv-nums"><div class="inv-ns"><div class="inv-nv">6</div><div class="inv-nl">Actual</div></div><div class="inv-ns"><div class="inv-nv">5</div><div class="inv-nl">Mín</div></div><div class="inv-ns"><div class="inv-nv">$4.2K</div><div class="inv-nl">Precio</div></div></div>
+            </div>
+            <div class="inv-card crit">
+              <div class="inv-top"><div class="inv-ico" style="background:#fee2e2"></div><div class="inv-nm">Floculante</div><span class="badge b-c" style="font-size:6pt;padding:1px 4px">⚠ Crítico</span></div>
+              <div class="inv-bw"><div class="inv-bar bar-r" style="width:20%"></div></div>
+              <div class="inv-nums"><div class="inv-ns"><div class="inv-nv" style="color:#B71C1C">2</div><div class="inv-nl">Actual</div></div><div class="inv-ns"><div class="inv-nv">5</div><div class="inv-nl">Mín</div></div><div class="inv-ns"><div class="inv-nv">$9K</div><div class="inv-nl">Precio</div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CP10/11 Rutas -->
+    <div class="ev-card">
+      <div class="ev-label"><span class="ev-code">CP10/11</span> Rutas Inteligentes</div>
+      <div class="browser">
+        <div class="browser-bar"><div class="dots"><span class="d-r"></span><span class="d-y"></span><span class="d-g"></span></div><div class="url-bar">localhost:5173/rutas</div></div>
+        <div class="screen mock-rutas">
+          <div style="font-size:7.5pt;font-weight:700;color:#1B2A3B">Rutas Inteligentes</div>
+          <div style="font-size:6pt;color:#7A8FA6;margin-bottom:4px">Solo visible para Administrador y Supervisor</div>
+          <div class="rt-stats">
+            <div class="rt-st"><div class="rt-ico" style="background:#0D3B6E">👤</div><div><div class="rt-n">2</div><div class="rt-l">Técnicos</div></div></div>
+            <div class="rt-st"><div class="rt-ico" style="background:#0ea5e9">↗</div><div><div class="rt-n">6</div><div class="rt-l">Visitas</div></div></div>
+            <div class="rt-st"><div class="rt-ico" style="background:#10b981">✓</div><div><div class="rt-n">1</div><div class="rt-l">En progreso</div></div></div>
+          </div>
+          <div class="rt-tec">
+            <div class="rt-th"><span class="rt-tn">Carlos Reyes</span><span class="rt-tc">3 paradas · <span style="color:#0ea5e9">1 en progreso</span></span></div>
+            <div class="rt-stop"><div class="rt-nc">1</div><div><div class="rt-sn">Hotel Paraíso — Terraza</div><div class="rt-sl" style="color:#0ea5e9">En progreso</div></div></div>
+            <div class="rt-stop"><div class="rt-nc out">2</div><div><div class="rt-sn">Los Álamos — Gimnasio</div><div class="rt-sl">Mañana</div></div></div>
+          </div>
+          <div class="rt-tec">
+            <div class="rt-th"><span class="rt-tn">María López</span><span class="rt-tc">3 paradas pendientes</span></div>
+            <div class="rt-stop"><div class="rt-nc out">1</div><div><div class="rt-sn">Los Álamos — Principal</div><div class="rt-sl">Mañana</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CP12/13 Portal -->
+    <div class="ev-card">
+      <div class="ev-label"><span class="ev-code">CP12/13</span> Portal del Cliente</div>
+      <div class="browser">
+        <div class="browser-bar"><div class="dots"><span class="d-r"></span><span class="d-y"></span><span class="d-g"></span></div><div class="url-bar">localhost:5173/portal</div></div>
+        <div class="screen mock-portal">
+          <div class="portal-hd"><span class="portal-br">PoolTech · Mi Portal</span><span class="portal-ur">Cond. Los Álamos · Cliente</span></div>
+          <div class="portal-body">
+            <div class="portal-plan">
+              <div><div class="pp-l">Plan actual</div><div class="pp-v">Básico</div><div class="pp-b">↑ Mejorar plan</div></div>
+              <div style="text-align:right"><div class="pp-l">Mensualidad</div><div class="pp-v">$110.000</div><div style="font-size:5.5pt;color:rgba(255,255,255,.5)">$55.000/piscina</div></div>
+            </div>
+            <div class="pool-grid">
+              <div class="pc"><div class="pc-n">Área recreativa</div><div class="pc-i">Dulce · 50.000 L</div><div class="pc-stats"><div class="pcs"><div class="pcs-n">2</div><div class="pcs-l">Realizadas</div></div><div class="pcs"><div class="pcs-n">2</div><div class="pcs-l">Pendientes</div></div><div class="pcs"><div class="pcs-n" style="font-size:7pt;color:#1B5E20">$55K</div><div class="pcs-l">Mensual</div></div></div><div class="pc-btns"><div class="pcb-a">⚠ Anomalía</div><div class="pcb-m">🔧 Mantención</div></div></div>
+              <div class="pc"><div class="pc-n">Gimnasio subterráneo</div><div class="pc-i">Climatizada · 25.000 L</div><div class="pc-stats"><div class="pcs"><div class="pcs-n">1</div><div class="pcs-l">Realizadas</div></div><div class="pcs"><div class="pcs-n">2</div><div class="pcs-l">Pendientes</div></div><div class="pcs"><div class="pcs-n" style="font-size:7pt;color:#1B5E20">$55K</div><div class="pcs-l">Mensual</div></div></div><div class="pc-btns"><div class="pcb-a">⚠ Anomalía</div><div class="pcb-m">🔧 Mantención</div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CP15 Químico -->
+    <div class="ev-card">
+      <div class="ev-label"><span class="ev-code">CP15</span> Calculadora de Dosificación Química</div>
+      <div class="browser">
+        <div class="browser-bar"><div class="dots"><span class="d-r"></span><span class="d-y"></span><span class="d-g"></span></div><div class="url-bar">localhost:5173/visitas · Modal Dosificación</div></div>
+        <div class="screen mock-chem">
+          <div class="chem-box">
+            <div class="chem-title">Parámetros actuales</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-bottom:4px">
+              <div style="background:#f0f5fb;border-radius:2px;padding:2.5px 4px;font-size:6pt;color:#7A8FA6">Vol: <strong style="color:#1B2A3B">50.000 L</strong></div>
+              <div style="background:#f0f5fb;border-radius:2px;padding:2.5px 4px;font-size:6pt;color:#7A8FA6">Tipo: <strong style="color:#1B2A3B">Dulce</strong></div>
+            </div>
+            <div class="chem-param" style="background:#FFF9C4">
+              <span class="chem-lbl" style="color:#92400E">pH actual</span>
+              <span class="chem-val" style="color:#92400E">6.5</span>
+              <span class="chem-tag c-lo">Bajo</span>
+            </div>
+            <div class="chem-param" style="background:#FFCDD2">
+              <span class="chem-lbl" style="color:#B71C1C">Cloro libre (ppm)</span>
+              <span class="chem-val" style="color:#B71C1C">0.4</span>
+              <span class="chem-tag c-hi">Crítico</span>
+            </div>
+            <div class="chem-param" style="background:#C8E6C9">
+              <span class="chem-lbl" style="color:#1B5E20">Alcalinidad (ppm)</span>
+              <span class="chem-val" style="color:#1B5E20">95</span>
+              <span class="chem-tag c-ok">Normal</span>
+            </div>
+            <div class="chem-calc-btn">Calcular Dosificación →</div>
+          </div>
+          <div class="chem-box">
+            <div class="chem-title" style="display:flex;justify-content:space-between">Dosificación<span class="badge b-ok" style="font-size:6pt;padding:1px 5px">Calculado</span></div>
+            <div class="chem-prod">
+              <div class="chem-pn"><span class="chem-nm">Cloro granulado 65%</span><span class="chem-qty">1,50 kg</span></div>
+              <div class="chem-bw"><div class="chem-bf bf1" style="width:85%"></div></div>
+              <div class="chem-sub"><span class="chem-sl">Eleva a 2.4 ppm</span><span class="chem-sl">Stock: 50 kg ✓</span></div>
+            </div>
+            <div class="chem-prod">
+              <div class="chem-pn"><span class="chem-nm">pH+ Regulador sódico</span><span class="chem-qty">0,80 kg</span></div>
+              <div class="chem-bw"><div class="chem-bf bf2" style="width:65%"></div></div>
+              <div class="chem-sub"><span class="chem-sl">Eleva pH a 7.4</span><span class="chem-sl">Stock: 15 kg ✓</span></div>
+            </div>
+            <div class="chem-prod">
+              <div class="chem-pn"><span class="chem-nm">Alguicida preventivo</span><span class="chem-qty">0,30 L</span></div>
+              <div class="chem-bw"><div class="chem-bf bf3" style="width:30%"></div></div>
+              <div class="chem-sub"><span class="chem-sl">Dosis preventiva</span><span class="chem-sl" style="color:#F57F17">Stock: 6 L ⚠</span></div>
+            </div>
+            <div class="chem-total">
+              <div><div class="ct-l">Costo estimado</div><div class="ct-n">$21.010</div></div>
+              <div style="text-align:right"><div class="ct-l">Tiempo visita</div><div class="ct-n" style="color:#0D3B6E">~90 min</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="page-footer">
+    <span>DuocUC · Ingeniería de Software · 2026</span>
+    <span>5 – 6</span>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     CONTROL DE VERSIONES
+     ══════════════════════════════════════════ -->
+<div class="page page-break">
+  <div class="duoc-logo"><span class="duoc-d">Duoc</span><span class="duoc-oc">UC</span><div class="duoc-uc-box"><div class="duoc-circle"><span>⚙</span></div></div></div>
+
+  <div class="section-title">3. Control de Versiones v1.0</div>
+  <div class="hr"></div>
+
+  <p class="body-text">A continuación se presenta el historial de cambios del sistema PoolTech, desde su versión inicial (v0.1) hasta el release final (v1.0). Cada cambio está clasificado por tipo, módulo afectado y fecha de implementación, en concordancia con el historial de commits del repositorio Git (<strong>feliignaciodev/paginaWebPrototipoIngSoftware</strong>).</p>
+
+  <div class="subsection-title">3.1 Línea de Tiempo de Versiones</div>
+
+  <div style="display:flex;align-items:flex-start;gap:0;margin:4mm 0 5mm;overflow-x:auto;padding:1mm 0">
+    <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0">
+      <div style="width:30px;height:30px;border-radius:50%;background:#7A8FA6;color:#fff;font-size:7pt;font-weight:700;display:flex;align-items:center;justify-content:center">v0.1</div>
+      <div style="font-size:6.5pt;color:#7A8FA6;margin-top:1mm;text-align:center;width:50px">Estructura base</div>
+    </div>
+    <div style="height:2px;background:#D4E0EE;flex:1;margin-top:15px"></div>
+    <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0">
+      <div style="width:30px;height:30px;border-radius:50%;background:#7A8FA6;color:#fff;font-size:7pt;font-weight:700;display:flex;align-items:center;justify-content:center">v0.3</div>
+      <div style="font-size:6.5pt;color:#7A8FA6;margin-top:1mm;text-align:center;width:50px">Login & Dashboard</div>
+    </div>
+    <div style="height:2px;background:#D4E0EE;flex:1;margin-top:15px"></div>
+    <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0">
+      <div style="width:30px;height:30px;border-radius:50%;background:#7A8FA6;color:#fff;font-size:7pt;font-weight:700;display:flex;align-items:center;justify-content:center">v0.5</div>
+      <div style="font-size:6.5pt;color:#7A8FA6;margin-top:1mm;text-align:center;width:50px">Inventario</div>
+    </div>
+    <div style="height:2px;background:#D4E0EE;flex:1;margin-top:15px"></div>
+    <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0">
+      <div style="width:30px;height:30px;border-radius:50%;background:#2E4A8C;color:#fff;font-size:7pt;font-weight:700;display:flex;align-items:center;justify-content:center">v0.8</div>
+      <div style="font-size:6.5pt;color:#7A8FA6;margin-top:1mm;text-align:center;width:50px">JWT + Rutas</div>
+    </div>
+    <div style="height:2px;background:#D4E0EE;flex:1;margin-top:15px"></div>
+    <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0">
+      <div style="width:30px;height:30px;border-radius:50%;background:var(--yellow);color:var(--navy);font-size:7pt;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid var(--navy)">v1.0</div>
+      <div style="font-size:6.5pt;color:var(--navy);margin-top:1mm;text-align:center;width:50px;font-weight:700">Release Final</div>
+    </div>
+  </div>
+
+  <div class="subsection-title">3.2 Historial de Cambios</div>
+
+  <div class="t-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="width:40px">Versión</th>
+          <th style="width:60px">Fecha</th>
+          <th>Cambio realizado</th>
+          <th style="width:70px">Módulo</th>
+          <th style="width:65px;text-align:center">Tipo</th>
+          <th style="width:80px">Responsable</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="td-id">v0.1</td>
+          <td>01 Jun 2026</td>
+          <td>Inicialización del repositorio Git, estructura de directorios frontend/backend, configuración de Docker Compose con PostgreSQL 16</td>
+          <td>Infraestructura</td>
+          <td style="text-align:center"><span class="ver-badge v-infra">Infraestructura</span></td>
+          <td>B. Sepúlveda</td>
+        </tr>
+        <tr>
+          <td class="td-id">v0.2</td>
+          <td>05 Jun 2026</td>
+          <td>Diseño e implementación del esquema de base de datos (init.sql): tablas usuarios, clientes, piscinas, visitas, inventario e insumos utilizados</td>
+          <td>Base de Datos</td>
+          <td style="text-align:center"><span class="ver-badge v-infra">Infraestructura</span></td>
+          <td>F. Sepúlveda</td>
+        </tr>
+        <tr>
+          <td class="td-id">v0.3</td>
+          <td>10 Jun 2026</td>
+          <td>Implementación del login interactivo con validación de campos, sidebar colapsable con animaciones y README definitivo del proyecto</td>
+          <td>Frontend</td>
+          <td style="text-align:center"><span class="ver-badge v-feat">Feature</span></td>
+          <td>F. Sepúlveda</td>
+        </tr>
+        <tr>
+          <td class="td-id">v0.4</td>
+          <td>15 Jun 2026</td>
+          <td>Dashboard interactivo con tarjetas de métricas, visitas recientes y alertas de stock bajo; comandos Docker documentados en README</td>
+          <td>Frontend</td>
+          <td style="text-align:center"><span class="ver-badge v-feat">Feature</span></td>
+          <td>J. Gajardo</td>
+        </tr>
+        <tr>
+          <td class="td-id">v0.5</td>
+          <td>20 Jun 2026</td>
+          <td>Rediseño del módulo Inventario: tarjetas con barras de progreso de stock, semáforo visual (Normal/Bajo/Crítico) y precio unitario por insumo</td>
+          <td>Inventario</td>
+          <td style="text-align:center"><span class="ver-badge v-feat">Feature</span></td>
+          <td>F. Sepúlveda</td>
+        </tr>
+        <tr>
+          <td class="td-id">v0.6</td>
+          <td>25 Jun 2026</td>
+          <td>Integración de documentos de entrega: PROTOTIPO.md, CASOS-DE-PRUEBA.md y CONTROL-DE-CAMBIOS.md en la raíz del repositorio</td>
+          <td>Documentación</td>
+          <td style="text-align:center"><span class="ver-badge v-docs">Documentación</span></td>
+          <td>Equipo</td>
+        </tr>
+        <tr>
+          <td class="td-id">v0.7</td>
+          <td>30 Jun 2026</td>
+          <td>Autenticación real JWT: middleware verifyToken/requireRoles, interceptor Axios con Bearer token, AuthContext con sessionStorage y login contra API real</td>
+          <td>Seguridad</td>
+          <td style="text-align:center"><span class="ver-badge v-sec">Seguridad</span></td>
+          <td>F. Sepúlveda</td>
+        </tr>
+        <tr>
+          <td class="td-id">v0.8</td>
+          <td>02 Jul 2026</td>
+          <td>Módulo Rutas Inteligentes: agrupación de visitas pendientes por técnico con orden secuencial, badges de urgencia y acceso restringido por rol (admin/supervisor)</td>
+          <td>Rutas</td>
+          <td style="text-align:center"><span class="ver-badge v-feat">Feature</span></td>
+          <td>F. Sepúlveda</td>
+        </tr>
+        <tr>
+          <td class="td-id">v0.9</td>
+          <td>05 Jul 2026</td>
+          <td>Portal del Cliente: vista standalone para rol cliente con tarjetas de piscinas, mensualidad, plan actual, modales para reporte de anomalía y solicitud de mantención extraordinaria</td>
+          <td>Portal Cliente</td>
+          <td style="text-align:center"><span class="ver-badge v-feat">Feature</span></td>
+          <td>F. Sepúlveda</td>
+        </tr>
+        <tr>
+          <td class="td-id">v0.9.1</td>
+          <td>06 Jul 2026</td>
+          <td>Datos semilla actualizados: usuario supervisor (Ana González), usuario cliente (Condominio Los Álamos), 5 visitas pendientes para demostración de rutas; ENUM rol_usuario extendido</td>
+          <td>Base de Datos</td>
+          <td style="text-align:center"><span class="ver-badge v-infra">Infraestructura</span></td>
+          <td>F. Sepúlveda</td>
+        </tr>
+        <tr>
+          <td class="td-id">v0.9.2</td>
+          <td>07 Jul 2026</td>
+          <td>Generación del documento control-versiones-v1.html: tabla PDF imprimible con historial v0.1→v1.0, timeline de versiones y badges por tipo de cambio</td>
+          <td>Documentación</td>
+          <td style="text-align:center"><span class="ver-badge v-docs">Documentación</span></td>
+          <td>Equipo</td>
+        </tr>
+        <tr>
+          <td class="td-id">v1.0</td>
+          <td>09 Jul 2026</td>
+          <td>Release final: planilla de casos de prueba CP01–CP15 (formato requerido por pauta), sección de evidencias con mockups de 8 módulos, calculadora de dosificación química integrada</td>
+          <td>QA / Entrega</td>
+          <td style="text-align:center"><span class="ver-badge v-docs">Documentación</span></td>
+          <td>Equipo</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="page-footer">
+    <span>DuocUC · Ingeniería de Software · 2026</span>
+    <span>7 – 8</span>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════
+     CIERRE
+     ══════════════════════════════════════════ -->
+<div class="page page-break">
+  <div class="duoc-logo"><span class="duoc-d">Duoc</span><span class="duoc-oc">UC</span><div class="duoc-uc-box"><div class="duoc-circle"><span>⚙</span></div></div></div>
+
+  <div class="section-title">Conclusión</div>
+  <div class="hr"></div>
+
+  <p class="body-text">El presente documento consolida los tres entregables críticos exigidos por la pauta académica: la planilla de casos de prueba con sus datos de entrada y resultados, las evidencias visuales del sistema en funcionamiento, y el registro de control de versiones del proyecto PoolTech.</p>
+
+  <p class="body-text">Los <strong>15 casos de prueba</strong> ejecutados cubren la totalidad de los módulos funcionales del sistema: autenticación con JWT, control de acceso basado en roles (RBAC), gestión de clientes y piscinas, programación y seguimiento de visitas técnicas, administración de inventario con alertas automáticas de stock, rutas inteligentes con restricción por rol, portal del cliente con reportes de anomalías, y el motor de cálculo de dosificación química. Todos los casos obtuvieron estado <strong>Aprobado</strong>, resultando en una tasa de éxito del <strong>100%</strong>.</p>
+
+  <p class="body-text">El control de versiones documenta la evolución del sistema desde la estructura base (v0.1, 01 Jun 2026) hasta el release final (v1.0, 09 Jul 2026), con <strong>12 cambios registrados</strong> clasificados en cinco categorías: Feature (5), Infraestructura (3), Documentación (3) y Seguridad (1).</p>
+
+  <p class="body-text">El prototipo funcional se encuentra disponible para demostración en el repositorio <strong>github.com/feliignaciodev/paginaWebPrototipoIngSoftware</strong> y se levanta localmente con el comando <code style="background:#f0f5fb;padding:1px 5px;border-radius:2px;font-family:'Courier New',monospace;font-size:10pt">docker compose up --build</code> desde la raíz del proyecto.</p>
+
+  <div class="hr-thin" style="margin-top:8mm"></div>
+
+  <!-- Firma -->
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6mm;margin-top:8mm">
+    <div style="text-align:center">
+      <div style="border-top:1px solid var(--ink);padding-top:2mm;margin-top:12mm">
+        <div style="font-size:9.5pt;font-weight:bold">Benjamin Sepúlveda</div>
+        <div style="font-size:8.5pt;color:var(--muted)">Development Team</div>
+      </div>
+    </div>
+    <div style="text-align:center">
+      <div style="border-top:1px solid var(--ink);padding-top:2mm;margin-top:12mm">
+        <div style="font-size:9.5pt;font-weight:bold">Felipe Sepúlveda</div>
+        <div style="font-size:8.5pt;color:var(--muted)">Product Owner</div>
+      </div>
+    </div>
+    <div style="text-align:center">
+      <div style="border-top:1px solid var(--ink);padding-top:2mm;margin-top:12mm">
+        <div style="font-size:9.5pt;font-weight:bold">Javier Gajardo</div>
+        <div style="font-size:8.5pt;color:var(--muted)">Scrum Master</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align:center;margin-top:10mm;font-size:9pt;color:var(--muted)">
+    Profesor: Alvaro Jaque · Sección: 001-V · DuocUC · Julio 2026
+  </div>
+
+  <div class="page-footer">
+    <span>DuocUC · Ingeniería de Software · 2026</span>
+    <span>9</span>
+  </div>
+</div>
+
+</body>
+</html>
